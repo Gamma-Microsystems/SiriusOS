@@ -47,21 +47,6 @@ The following projects are currently in progress:
 - **Support more hardware** with new device drivers for AHCI, USB, virtio devices, etc.
 - **Continue to improve the C library** which remains quite incomplete compared to Newlib and is a major source of issues with bringing back old ports.
 
-## Building / Installation
-
-### Building With Docker
-
-General users hoping to build SiriusOS from source are recommended to fork the repository on Github and make use of the Github CI pipeline.
-
-For those looking to build locally on an appropriately configured Linux host with Docker, a build container is available. The SiriusOS repository should be used as a bind mount at `/root/misaka` and `util/build-in-docker.sh` can be run within this container to complete the compilation process:
-
-    git clone https://github.com/Gamma-Microsystems/SiriusOS.git
-    cd SiriusOS
-    docker pull toaruos/build-tools:1.99.x
-    docker run -v `pwd`:/root/misaka -w /root/misaka -e LANG=C.UTF-8 -t toaruos/build-tools:1.99.x util/build-in-docker.sh
-
-After building like this, you can run the various utility targets (`make run`, etc.). Try `make shell` to run a SiriusOS shell using a serial port with QEMU.
-
 ### Project Layout
 
 - **apps** - Userspace applications, all first-party.
@@ -89,7 +74,6 @@ The root filesystem is set up as follows:
 - `etc`: Configuration files, startup scripts.
 - `home`: User directories.
 - `lib`: First-party libraries
-  - `kuroko`: Kuroko modules.
 - `mod`: Loadable kernel modules.
 - `proc`: Virtual files that present kernel state.
   - `1`, etc.: Virtual files with status information for individual processes.
@@ -100,7 +84,6 @@ The root filesystem is set up as follows:
   - `include`: Header files, including potentially ones from third-party packages.
   - `lib`: Third-party libraries. Should have `libgcc_s.so` by default.
   - `share`: Various resources.
-    - `bim`: Syntax highlighting and themes for the text editor.
     - `cursor`: Mouse cursor sprites.
     - `fonts`: TrueType font files. Live CDs ship with Deja Vu Sans.
     - `games`: Dumping ground for game-related resource files, like Doom wads.
@@ -110,25 +93,19 @@ The root filesystem is set up as follows:
     - `wallpapers`: JPEG wallpapers.
 - `var`: Runtime files, including package manager manifest cache, PID files, some lock files, etc.
 
-## Running ToaruOS
+## Running SiriusPS
 
 ### VirtualBox and VMware Workstation
 
-The best end-user experience with ToaruOS will be had in either of these virtual machines, as ToaruOS has support for their automatic display sizing and absolute mouse positioning.
+The best end-user experience with SiriusOS will be had in either of these virtual machines, as SiriusOS has support for their automatic display sizing and absolute mouse positioning.
 
 Set up a new VM for an "other" 64-bit guest, supply it with at least 1GiB of RAM, attach the CD image, remove or ignore any hard disks, and select an Intel Gigabit NIC. Two or more CPUs are recommended, as well.
-
-![VirtualBox screenshot](https://klange.dev/s/Screenshot%20from%202021-12-06%2011-39-27.png)
-*ToaruOS running in VirtualBox.*
-
-![VMware screenshot](https://klange.dev/s/Screenshot%20from%202021-12-06%2011-41-17.png)
-*ToaruOS running in VMware Workstation Player.*
 
 By default, the bootloader will pass a flag to the VirtualBox device driver to disable "Seamless" support as the implementation has a performance overhead. To enable Seamless mode, use the bootloader menu to check the "VirtualBox Seamless" option before booting. The menu also has options to disable automatic guest display sizing if you experience issues with this feature.
 
 ### QEMU
 
-Most development of ToaruOS happens in QEMU, as it provides the most flexibility in hardware and the best debugging experience. A recommended QEMU command line in an Ubuntu 20.04 host is:
+Most development of SiriusOS happens in QEMU, as it provides the most flexibility in hardware and the best debugging experience. A recommended QEMU command line in an Ubuntu 20.04 host is:
 
 ```
 qemu-system-x86_64 -enable-kvm -m 1G -device AC97 -cdrom image.iso -smp 2
@@ -142,7 +119,7 @@ The option `-M q35` will replace the PIIX chipset emulation with a newer one, wh
 
 ### Other
 
-ToaruOS has been successfully tested on real hardware. If the native BIOS or EFI loaders fail to function, try booting with Grub. ToaruOS complies with the "Multiboot" and "Multiboot 2" specs so it may be loaded with either the `multiboot` or `multiboot2` commands as follows:
+SiriusOS has been successfully tested on real hardware. If the native BIOS or EFI loaders fail to function, try booting with Grub. SiriusOS complies with the "Multiboot" and "Multiboot 2" specs so it may be loaded with either the `multiboot` or `multiboot2` commands as follows:
 
 ```
 multiboot2 /path/to/misaka-kernel root=/dev/ram0 migrate vid=auto start=live-session
@@ -150,67 +127,11 @@ module2 /path/to/ramdisk.igz
 set gfxpayload=keep
 ```
 
-![Native photo](https://klange.dev/s/IMG_8387.jpg)
-*ToaruOS running natively from a USB stick on a ThinkPad T410.*
-
 ## License
 
-All first-party parts of ToaruOS are made available under the terms of the University of Illinois / NCSA License, which is a BSD-style permissive license.
+All first-party parts of SiriusOS are made available under the terms of the University of Illinois / NCSA License, which is a BSD-style permissive license.
 Unless otherwise specified, this is the original and only license for all files in this repository - just because a file does not have a copyright header does not mean it isn't under this license.
-ToaruOS is intended as an educational reference, and I encourage the use of my code, but please be sure you follow the requirements of the license.
+SiriusOS is intended as an educational reference, and I encourage the use of my code, but please be sure you follow the requirements of the license.
 You may redistribute code under the NCSA license, as well as make modifications to the code and sublicense it under other terms (such as the GPL, or a proprietary license), but you must always include the copyright notice specified in the license as well as make the full text of the license (it's only a couple paragraphs) available to end-users.
 
-While most of ToaruOS is written entirely by myself, be sure to include other authors where relevant, such as with [Mike's audio subsystem](https://github.com/klange/toaruos/blob/master/kernel/audio/snd.c) or [Dale's string functions](https://github.com/klange/toaruos/blob/master/kernel/misc/string.c).
-
-Some components of ToaruOS, such as [Kuroko](https://github.com/kuroko-lang/kuroko/blob/9f6160092ecece0f2c18b63c066151cbe0ded1bb/LICENSE) or [bim](https://github.com/klange/toaruos/blob/master/apps/bim.c#L3) have different but compatible terms.
-
-## Community
-
-### Mirrors
-
-ToaruOS is regularly mirrored to multiple Git hosting sites.
-
-- Gitlab: [toaruos/toaruos](https://gitlab.com/toaruos/toaruos)
-- GitHub: [klange/toaruos](https://github.com/klange/toaruos)
-- Bitbucket: [klange/toaruos](https://bitbucket.org/klange/toaruos)
-- ToaruOS.org: [klange/toaruos](https://git.toaruos.org/klange/toaruos)
-
-### IRC
-
-`#toaruos` on Libera (`irc.libera.chat`)
-
-## FAQs
-
-### Is ToaruOS self-hosting?
-
-Individual applications and libraries can be built by installing the `build-essential` metapackage from the repository, which will pull in `gcc` and `binutils`.
-Sources are available in the `/src` directory on the live CD in a similar layout to this repository, and the `auto-dep.krk` utility script is also available.
-
-For building ramdisks, finalized kernels, or CD images, some components are currently unavailable.
-In particular, the [build script for ramdisks](util/createramdisk.py) is still written in Python and depends on its `tarfile` module and `zlib` support.
-Previously, with a capable compiler toolchain, ToaruOS 1.x was able to build its own kernel, userspace, libraries, and bootloader, and turn these into a working ISO CD image through a Python script that performed a similar function to the Makefile.
-
-ToaruOS is not currently capable of building most of its ports, due to a lack of a proper POSIX shell and Make implementation. These are eventual goals of the project.
-
-### Is ToaruOS a Linux distribution?
-
-No, not at all. There is no code from Linux anywhere in ToaruOS, nor were Linux sources used as a reference material.
-
-ToaruOS is a completely independent project, and all code in this repository - which is the entire codebase of the operating system, including its kernel, bootloaders, libraries, and applications - is original, written by myself and a handful of contributors over the course of ten years.
-The complete source history, going back to when ToaruOS was nothing more than a baremetal "hello world" can be tracked through this git repository.
-
-### When you say "complete"...
-
-ToaruOS is complete in the sense that it covers the whole range of functionality for an OS: It is not "just a kernel" or "just a userspace".
-
-ToaruOS is _not_ complete in the sense of being "done".
-
-### Is ToaruOS POSIX-compliant?
-
-While I aim to support POSIX interfaces well enough for software to be ported, strict implementation of the standard is not a major goal of the OS, and full compliance may even be undesirable.
-
-### Are contributions accepted?
-
-ToaruOS is a personal project, not a community project. Contributions in the form of code should be discussed in advance. Ports and other work outside of the repo, however, are a great way to help out.
-
-You can also help by contributing to [Kuroko](https://github.com/kuroko-lang/kuroko) - which is part of why it's kept as a separate repository.
+While most of SiriusOS is written entirely by myself* (K. Lange), be sure to include other authors where relevant, such as with [Mike's audio subsystem](kernel/audio/snd.c) or [Dale's string functions](kernel/misc/string.c).

@@ -1,10 +1,11 @@
 /**
- * @brief Graphical interface to msk
+ * @brief Graphical interface of sirpkg (msk)
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2018-2021 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <stdio.h>
 #include <unistd.h>
@@ -24,9 +25,9 @@
 #include <toaru/confreader.h>
 #include <toaru/icon_cache.h>
 
-#define APPLICATION_TITLE "Package Manager"
+#define APPLICATION_TITLE "Sinaptik"
 #define SCROLL_AMOUNT 120
-#define VAR_PATH "/var/msk"
+#define VAR_PATH "/var/sirpkg"
 
 static yutani_t * yctx;
 static yutani_window_t * main_window;

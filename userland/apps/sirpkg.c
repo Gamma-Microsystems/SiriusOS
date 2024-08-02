@@ -1,17 +1,14 @@
 /**
- * @brief Package Management Utility for ToaruOS
- *
- * This is a not-quite-faithful reconstruction of the original
- * Python msk. The supported package format is a bit different,
- * to avoid the need to implement a full JSON parser.
+ * @brief Package Management Utility for SiriusOS (aka msk for toaru os)
  *
  * Packages can optionally be uncompressed, which is also
  * important for bootstrapping at the moment.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2018 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <stdio.h>
 #include <string.h>
@@ -23,9 +20,9 @@
 #include <toaru/list.h>
 #include <toaru/hashmap.h>
 
-#define MSK_VERSION "1.0.0"
-#define VAR_PATH "/var/msk"
-#define LOCK_PATH "/var/run/msk.lock"
+#define SIRPKG_VERSION "1.0.1"
+#define VAR_PATH "/var/sirpkg"
+#define LOCK_PATH "/var/run/sirpkg.lock"
 
 static confreader_t * msk_config = NULL;
 static confreader_t * msk_manifest = NULL;

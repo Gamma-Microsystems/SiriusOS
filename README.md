@@ -53,6 +53,13 @@ The following projects are currently in progress:
 - **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.
 - **Support more hardware** with new device drivers for AHCI, USB, virtio devices, etc.
 - **Continue to improve the C library** which remains quite incomplete compared to Newlib and is a major source of issues with bringing back old ports.
+- **More architectures**
+  - **PowerPC**
+  - **s390**
+  - **sparc**
+  - **mips**
+  - **riscv**
+  - **arm32**
 
 ### Project Layout
 

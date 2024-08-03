@@ -16,8 +16,8 @@
 .gdb_history
 /ramdisk.tar
 /ramdisk.igz
-/kSir.64
-/kSir
+/ksir.64
+/ksir
 /kernel/symbols.S
 /util/build
 /util/local

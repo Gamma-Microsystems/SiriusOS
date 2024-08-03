@@ -1,0 +1,408 @@
+diff --git a/bfd/config.bfd b/bfd/config.bfd
+index 6553aac1e99..f0ff5df2c15 100644
+--- a/bfd/config.bfd
++++ b/bfd/config.bfd
+@@ -243,6 +243,11 @@ case "${targ}" in
+     targ_archs="$targ_archs bfd_i386_arch bfd_powerpc_arch bfd_rs6000_arch"
+     want64=true
+     ;;
++  aarch64-*-sirius*)
++    targ_defvec=aarch64_elf64_le_vec
++    targ_selvecs="aarch64_elf64_be_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_le_vec arm_elf32_be_vec"
++    want64=true
++    ;;
+   aarch64-*-elf | aarch64-*-rtems* | aarch64-*-genode*)
+     targ_defvec=aarch64_elf64_le_vec
+     targ_selvecs="aarch64_elf64_be_vec aarch64_elf32_le_vec aarch64_elf32_be_vec arm_elf32_le_vec arm_elf32_be_vec aarch64_pei_le_vec aarch64_pe_le_vec"
+@@ -612,6 +617,11 @@ case "${targ}" in
+     targ_defvec=i386_elf32_vec
+     targ_selvecs=iamcu_elf32_vec
+     ;;
++  i[3-7]86-*-sirius*)
++    targ_defvec=i386_elf32_vec
++    targ_selvces=
++    targ64_selvecs=x86_64_elf64_vec
++    ;;
+   i[3-7]86-*-dicos*)
+     targ_defvec=i386_elf32_vec
+     targ_selvecs=iamcu_elf32_vec
+@@ -710,6 +720,11 @@ case "${targ}" in
+     targ_selvecs="i386_elf32_vec iamcu_elf32_vec i386_coff_vec i386_pei_vec x86_64_pe_vec x86_64_pei_vec"
+     want64=true
+     ;;
++  x86_64-*-sirius*)
++    targ_defvec=x86_64_elf64_vec
++    targ_selvecs=i386_elf32_vec
++    want64=true
++    ;;
+   x86_64-*-linux-*)
+     targ_defvec=x86_64_elf64_vec
+     targ_selvecs="i386_elf32_vec iamcu_elf32_vec x86_64_elf32_vec i386_pei_vec x86_64_pe_vec x86_64_pei_vec"
+diff --git a/config.sub b/config.sub
+index 2c6a07ab3c3..9d0db711f67 100755
+--- a/config.sub
++++ b/config.sub
+@@ -1768,7 +1768,7 @@ case $os in
+ 	     | onefs* | tirtos* | phoenix* | fuchsia* | redox* | bme* \
+ 	     | midnightbsd* | amdhsa* | unleashed* | emscripten* | wasi* \
+ 	     | nsk* | powerunix* | genode* | zvmoe* | qnx* | emx* | zephyr* \
+-	     | fiwix* | mlibc* | cos* | mbr* | ironclad* )
++	     | fiwix* | mlibc* | cos* | mbr* | ironclad* | sirius* )
+ 		;;
+ 	# This one is extra strict with allowed versions
+ 	sco3.2v2 | sco3.2v[4-9]* | sco5v6*)
+diff --git a/gas/configure.tgt b/gas/configure.tgt
+index d58f21873a3..576ddaa222d 100644
+--- a/gas/configure.tgt
++++ b/gas/configure.tgt
+@@ -6,12 +6,12 @@
+ # it under the terms of the GNU General Public License as published by
+ # the Free Software Foundation; either version 3 of the License, or
+ # (at your option) any later version.
+-# 
++#
+ # This program is distributed in the hope that it will be useful,
+ # but WITHOUT ANY WARRANTY; without even the implied warranty of
+ # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ # GNU General Public License for more details.
+-# 
++#
+ # You should have received a copy of the GNU General Public License
+ # along with this program; see the file COPYING3.  If not see
+ # <http://www.gnu.org/licenses/>.
+@@ -129,6 +129,7 @@ case ${generic_target} in
+   aarch64*-*-elf*)			fmt=elf;;
+   aarch64*-*-fuchsia*)			fmt=elf;;
+   aarch64*-*-haiku*)			fmt=elf em=haiku ;;
++  aarch64*-*-sirius*)			fmt=elf;;
+   aarch64*-*-genode*)			fmt=elf;;
+   aarch64*-*-linux*)			fmt=elf em=linux
+     case ${cpu}-${os} in
+@@ -229,6 +230,7 @@ case ${generic_target} in
+   i386-*-beos*)				fmt=elf ;;
+   i386-*-elfiamcu)			fmt=elf arch=iamcu ;;
+   i386-*-elf*)				fmt=elf ;;
++  i386-*-sirius*)			fmt=elf ;;
+   i386-*-fuchsia*)			fmt=elf ;;
+   i386-*-haiku*)			fmt=elf em=haiku ;;
+   i386-*-genode*)			fmt=elf ;;
+@@ -339,7 +341,7 @@ case ${generic_target} in
+   moxie-*-uclinux)			fmt=elf em=linux ;;
+   moxie-*-moxiebox*)                    fmt=elf endian=little ;;
+   moxie-*-*)				fmt=elf ;;
+-    
++
+   mt-*-elf)				fmt=elf bfd_gas=yes ;;
+ 
+   msp430-*-*)				fmt=elf ;;
+@@ -428,7 +430,7 @@ case ${generic_target} in
+   wasm32-*-*)                           fmt=elf ;;
+ 
+   xstormy16-*-*)			fmt=elf ;;
+-  
++
+   xgate-*-*)    			fmt=elf ;;
+ 
+   xtensa*-*-*)				fmt=elf ;;
+diff --git a/ld/Makefile.am b/ld/Makefile.am
+index 6a9833e5775..79c1665b829 100644
+--- a/ld/Makefile.am
++++ b/ld/Makefile.am
+@@ -457,6 +457,8 @@ ALL_64_EMULATION_SOURCES = \
+ 	eelf64ppc.c \
+ 	eelf64ppc_fbsd.c \
+ 	eelf64rdos.c \
++	eelf64sirius.c \
++	eelf64sirius_aarch64.c \
+ 	eelf64tilegx.c \
+ 	eelf64tilegx_be.c \
+ 	eelf_mipsel_haiku.c \
+diff --git a/ld/Makefile.in b/ld/Makefile.in
+index 8639e782cdf..c105664d1c2 100644
+--- a/ld/Makefile.in
++++ b/ld/Makefile.in
+@@ -186,7 +186,7 @@ libldtestplug_la_OBJECTS = $(am_libldtestplug_la_OBJECTS)
+ AM_V_lt = $(am__v_lt_@AM_V@)
+ am__v_lt_ = $(am__v_lt_@AM_DEFAULT_V@)
+ am__v_lt_0 = --silent
+-am__v_lt_1 = 
++am__v_lt_1 =
+ libldtestplug_la_LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC \
+ 	$(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=link $(CCLD) \
+ 	$(libldtestplug_la_CFLAGS) $(CFLAGS) \
+@@ -229,11 +229,11 @@ am__v_P_1 = :
+ AM_V_GEN = $(am__v_GEN_@AM_V@)
+ am__v_GEN_ = $(am__v_GEN_@AM_DEFAULT_V@)
+ am__v_GEN_0 = @echo "  GEN     " $@;
+-am__v_GEN_1 = 
++am__v_GEN_1 =
+ AM_V_at = $(am__v_at_@AM_V@)
+ am__v_at_ = $(am__v_at_@AM_DEFAULT_V@)
+ am__v_at_0 = @
+-am__v_at_1 = 
++am__v_at_1 =
+ DEFAULT_INCLUDES = -I.@am__isrc@
+ depcomp = $(SHELL) $(top_srcdir)/../depcomp
+ am__depfiles_maybe = depfiles
+@@ -247,7 +247,7 @@ LTCOMPILE = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ AM_V_CC = $(am__v_CC_@AM_V@)
+ am__v_CC_ = $(am__v_CC_@AM_DEFAULT_V@)
+ am__v_CC_0 = @echo "  CC      " $@;
+-am__v_CC_1 = 
++am__v_CC_1 =
+ CCLD = $(CC)
+ LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ 	$(LIBTOOLFLAGS) --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
+@@ -255,7 +255,7 @@ LINK = $(LIBTOOL) $(AM_V_lt) --tag=CC $(AM_LIBTOOLFLAGS) \
+ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
+ am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
+ am__v_CCLD_0 = @echo "  CCLD    " $@;
+-am__v_CCLD_1 = 
++am__v_CCLD_1 =
+ @MAINTAINER_MODE_FALSE@am__skiplex = test -f $@ ||
+ LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
+ LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+@@ -263,7 +263,7 @@ LTLEXCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+ AM_V_LEX = $(am__v_LEX_@AM_V@)
+ am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
+ am__v_LEX_0 = @echo "  LEX     " $@;
+-am__v_LEX_1 = 
++am__v_LEX_1 =
+ YLWRAP = $(top_srcdir)/../ylwrap
+ @MAINTAINER_MODE_FALSE@am__skipyacc = test -f $@ ||
+ am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
+@@ -274,7 +274,7 @@ LTYACCCOMPILE = $(LIBTOOL) $(AM_V_lt) $(AM_LIBTOOLFLAGS) \
+ AM_V_YACC = $(am__v_YACC_@AM_V@)
+ am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
+ am__v_YACC_0 = @echo "  YACC    " $@;
+-am__v_YACC_1 = 
++am__v_YACC_1 =
+ SOURCES = $(libdep_la_SOURCES) $(libldtestplug_la_SOURCES) \
+ 	$(libldtestplug2_la_SOURCES) $(libldtestplug3_la_SOURCES) \
+ 	$(libldtestplug4_la_SOURCES) $(ld_new_SOURCES) \
+@@ -282,31 +282,31 @@ SOURCES = $(libdep_la_SOURCES) $(libldtestplug_la_SOURCES) \
+ AM_V_DVIPS = $(am__v_DVIPS_@AM_V@)
+ am__v_DVIPS_ = $(am__v_DVIPS_@AM_DEFAULT_V@)
+ am__v_DVIPS_0 = @echo "  DVIPS   " $@;
+-am__v_DVIPS_1 = 
++am__v_DVIPS_1 =
+ AM_V_MAKEINFO = $(am__v_MAKEINFO_@AM_V@)
+ am__v_MAKEINFO_ = $(am__v_MAKEINFO_@AM_DEFAULT_V@)
+ am__v_MAKEINFO_0 = @echo "  MAKEINFO" $@;
+-am__v_MAKEINFO_1 = 
++am__v_MAKEINFO_1 =
+ AM_V_INFOHTML = $(am__v_INFOHTML_@AM_V@)
+ am__v_INFOHTML_ = $(am__v_INFOHTML_@AM_DEFAULT_V@)
+ am__v_INFOHTML_0 = @echo "  INFOHTML" $@;
+-am__v_INFOHTML_1 = 
++am__v_INFOHTML_1 =
+ AM_V_TEXI2DVI = $(am__v_TEXI2DVI_@AM_V@)
+ am__v_TEXI2DVI_ = $(am__v_TEXI2DVI_@AM_DEFAULT_V@)
+ am__v_TEXI2DVI_0 = @echo "  TEXI2DVI" $@;
+-am__v_TEXI2DVI_1 = 
++am__v_TEXI2DVI_1 =
+ AM_V_TEXI2PDF = $(am__v_TEXI2PDF_@AM_V@)
+ am__v_TEXI2PDF_ = $(am__v_TEXI2PDF_@AM_DEFAULT_V@)
+ am__v_TEXI2PDF_0 = @echo "  TEXI2PDF" $@;
+-am__v_TEXI2PDF_1 = 
++am__v_TEXI2PDF_1 =
+ AM_V_texinfo = $(am__v_texinfo_@AM_V@)
+ am__v_texinfo_ = $(am__v_texinfo_@AM_DEFAULT_V@)
+ am__v_texinfo_0 = -q
+-am__v_texinfo_1 = 
++am__v_texinfo_1 =
+ AM_V_texidevnull = $(am__v_texidevnull_@AM_V@)
+ am__v_texidevnull_ = $(am__v_texidevnull_@AM_DEFAULT_V@)
+ am__v_texidevnull_0 = > /dev/null
+-am__v_texidevnull_1 = 
++am__v_texidevnull_1 =
+ INFO_DEPS = ld.info ldint.info
+ am__TEXINFO_TEX_DIR = $(srcdir)/../texinfo
+ DVIS = ld.dvi ldint.dvi
+@@ -566,8 +566,8 @@ tooldir = $(exec_prefix)/$(target_alias)
+ 
+ # Automake 1.10+ disables lex and yacc output file regeneration if
+ # maintainer mode is disabled.  Avoid this.
+-am__skiplex = 
+-am__skipyacc = 
++am__skiplex =
++am__skipyacc =
+ 
+ # This is where we get zlib from.  zlibdir is -L../zlib and zlibinc is
+ # -I../zlib, unless we were configured with --with-system-zlib, in which
+@@ -601,7 +601,7 @@ POD2MAN = pod2man --center="GNU Development Tools" \
+ # Setup the testing framework, if you have one
+ EXPECT = expect
+ RUNTEST = runtest
+-RUNTESTFLAGS = 
++RUNTESTFLAGS =
+ CC_FOR_TARGET = ` \
+   if [ -f $$r/../gcc/xgcc ] ; then \
+     if [ -f $$r/../newlib/Makefile ] ; then \
+@@ -658,7 +658,7 @@ AM_CPPFLAGS = -I. -I$(srcdir) -I../bfd -I$(BFDDIR) -I$(INCDIR) @zlibinc@ \
+ 
+ BFDLIB = ../bfd/libbfd.la
+ LIBIBERTY = ../libiberty/libiberty.a
+-@ENABLE_LIBCTF_FALSE@LIBCTF = 
++@ENABLE_LIBCTF_FALSE@LIBCTF =
+ @ENABLE_LIBCTF_TRUE@LIBCTF = ../libctf/libctf.la
+ 
+ # These all start with e so 'make clean' can find them.
+@@ -968,6 +968,8 @@ ALL_64_EMULATION_SOURCES = \
+ 	eelf64ppc_fbsd.c \
+ 	eelf64rdos.c \
+ 	eelf64tilegx.c \
++	eelf64sirius.c \
++	eelf64sirius_aarch64.c \
+ 	eelf64tilegx_be.c \
+ 	eelf_mipsel_haiku.c \
+ 	eelf_x86_64.c \
+@@ -1019,7 +1021,7 @@ OFILES = ldgram.@OBJEXT@ ldlex-wrapper.@OBJEXT@ lexsup.@OBJEXT@ ldlang.@OBJEXT@
+ STAGESTUFF = *.@OBJEXT@ ldscripts/* e*.c
+ SRC_POTFILES = $(CFILES) $(HFILES)
+ BLD_POTFILES = $(ALL_EMULATION_SOURCES) $(ALL_64_EMULATION_SOURCES)
+-@AMDEP_FALSE@GENDEPDIR = 
++@AMDEP_FALSE@GENDEPDIR =
+ @AMDEP_TRUE@GENDEPDIR = $(DEPDIR)
+ GENSCRIPTS = $(SHELL) $(srcdir)/genscripts.sh "${srcdir}" "${libdir}" "${prefix}" "${exec_prefix}" @host@ @target@ @target_alias@ "$(GENDEPDIR)" "${LIB_PATH}" "@EMULATION_LIBPATH@" "@NATIVE_LIB_DIRS@" @use_sysroot@ @enable_initfini_array@
+ GEN_DEPENDS = $(srcdir)/genscripts.sh ldscripts/stamp
+@@ -1134,7 +1136,7 @@ config.h: stamp-h1
+ stamp-h1: $(srcdir)/config.in $(top_builddir)/config.status
+ 	@rm -f stamp-h1
+ 	cd $(top_builddir) && $(SHELL) ./config.status config.h
+-$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps) 
++$(srcdir)/config.in: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
+ 	($(am__cd) $(top_srcdir) && $(AUTOHEADER))
+ 	rm -f stamp-h1
+ 	touch $@
+@@ -1190,19 +1192,19 @@ clean-noinstLTLIBRARIES:
+ 	  rm -f $${locs}; \
+ 	}
+ 
+-libdep.la: $(libdep_la_OBJECTS) $(libdep_la_DEPENDENCIES) $(EXTRA_libdep_la_DEPENDENCIES) 
++libdep.la: $(libdep_la_OBJECTS) $(libdep_la_DEPENDENCIES) $(EXTRA_libdep_la_DEPENDENCIES)
+ 	$(AM_V_GEN)$(libdep_la_LINK) -rpath $(bfdplugindir) $(libdep_la_OBJECTS) $(libdep_la_LIBADD) $(LIBS)
+ 
+-libldtestplug.la: $(libldtestplug_la_OBJECTS) $(libldtestplug_la_DEPENDENCIES) $(EXTRA_libldtestplug_la_DEPENDENCIES) 
++libldtestplug.la: $(libldtestplug_la_OBJECTS) $(libldtestplug_la_DEPENDENCIES) $(EXTRA_libldtestplug_la_DEPENDENCIES)
+ 	$(AM_V_CCLD)$(libldtestplug_la_LINK)  $(libldtestplug_la_OBJECTS) $(libldtestplug_la_LIBADD) $(LIBS)
+ 
+-libldtestplug2.la: $(libldtestplug2_la_OBJECTS) $(libldtestplug2_la_DEPENDENCIES) $(EXTRA_libldtestplug2_la_DEPENDENCIES) 
++libldtestplug2.la: $(libldtestplug2_la_OBJECTS) $(libldtestplug2_la_DEPENDENCIES) $(EXTRA_libldtestplug2_la_DEPENDENCIES)
+ 	$(AM_V_CCLD)$(libldtestplug2_la_LINK)  $(libldtestplug2_la_OBJECTS) $(libldtestplug2_la_LIBADD) $(LIBS)
+ 
+-libldtestplug3.la: $(libldtestplug3_la_OBJECTS) $(libldtestplug3_la_DEPENDENCIES) $(EXTRA_libldtestplug3_la_DEPENDENCIES) 
++libldtestplug3.la: $(libldtestplug3_la_OBJECTS) $(libldtestplug3_la_DEPENDENCIES) $(EXTRA_libldtestplug3_la_DEPENDENCIES)
+ 	$(AM_V_CCLD)$(libldtestplug3_la_LINK)  $(libldtestplug3_la_OBJECTS) $(libldtestplug3_la_LIBADD) $(LIBS)
+ 
+-libldtestplug4.la: $(libldtestplug4_la_OBJECTS) $(libldtestplug4_la_DEPENDENCIES) $(EXTRA_libldtestplug4_la_DEPENDENCIES) 
++libldtestplug4.la: $(libldtestplug4_la_OBJECTS) $(libldtestplug4_la_DEPENDENCIES) $(EXTRA_libldtestplug4_la_DEPENDENCIES)
+ 	$(AM_V_CCLD)$(libldtestplug4_la_LINK)  $(libldtestplug4_la_OBJECTS) $(libldtestplug4_la_LIBADD) $(LIBS)
+ install-binPROGRAMS: $(bin_PROGRAMS)
+ 	@$(NORMAL_INSTALL)
+@@ -1260,7 +1262,7 @@ deffilep.h: deffilep.c
+ 	@if test ! -f $@; then rm -f deffilep.c; else :; fi
+ 	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) deffilep.c; else :; fi
+ 
+-ld-new$(EXEEXT): $(ld_new_OBJECTS) $(ld_new_DEPENDENCIES) $(EXTRA_ld_new_DEPENDENCIES) 
++ld-new$(EXEEXT): $(ld_new_OBJECTS) $(ld_new_DEPENDENCIES) $(EXTRA_ld_new_DEPENDENCIES)
+ 	@rm -f ld-new$(EXEEXT)
+ 	$(AM_V_CCLD)$(LINK) $(ld_new_OBJECTS) $(ld_new_LDADD) $(LIBS)
+ 
+@@ -1477,6 +1479,8 @@ distclean-compile:
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64rdos.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64tilegx.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64tilegx_be.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64sirius.Po@am__quote@
++@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf64sirius_aarch64.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_i386.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_i386_be.Po@am__quote@
+ @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/eelf_i386_fbsd.Po@am__quote@
+@@ -1695,19 +1699,19 @@ ld.info: ld.texi $(ld_TEXINFOS)
+ 	fi; \
+ 	rm -rf $$backupdir; exit $$rc
+ 
+-ld.dvi: ld.texi $(ld_TEXINFOS) 
++ld.dvi: ld.texi $(ld_TEXINFOS)
+ 	$(AM_V_TEXI2DVI)TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+ 	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+ 	$(TEXI2DVI) $(AM_V_texinfo) --build-dir=$(@:.dvi=.t2d) -o $@ $(AM_V_texidevnull) \
+ 	`test -f 'ld.texi' || echo '$(srcdir)/'`ld.texi
+ 
+-ld.pdf: ld.texi $(ld_TEXINFOS) 
++ld.pdf: ld.texi $(ld_TEXINFOS)
+ 	$(AM_V_TEXI2PDF)TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+ 	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+ 	$(TEXI2PDF) $(AM_V_texinfo) --build-dir=$(@:.pdf=.t2p) -o $@ $(AM_V_texidevnull) \
+ 	`test -f 'ld.texi' || echo '$(srcdir)/'`ld.texi
+ 
+-ld.html: ld.texi $(ld_TEXINFOS) 
++ld.html: ld.texi $(ld_TEXINFOS)
+ 	$(AM_V_MAKEINFO)rm -rf $(@:.html=.htp)
+ 	$(AM_V_at)if $(MAKEINFOHTML) $(AM_MAKEINFOHTMLFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+ 	 -o $(@:.html=.htp) `test -f 'ld.texi' || echo '$(srcdir)/'`ld.texi; \
+@@ -1717,7 +1721,7 @@ ld.html: ld.texi $(ld_TEXINFOS)
+ 	  rm -rf $(@:.html=.htp); exit 1; \
+ 	fi
+ 
+-ldint.info: ldint.texi 
++ldint.info: ldint.texi
+ 	$(AM_V_MAKEINFO)restore=: && backupdir="$(am__leading_dot)am$$$$" && \
+ 	rm -rf $$backupdir && mkdir $$backupdir && \
+ 	if ($(MAKEINFO) --version) >/dev/null 2>&1; then \
+@@ -1735,19 +1739,19 @@ ldint.info: ldint.texi
+ 	fi; \
+ 	rm -rf $$backupdir; exit $$rc
+ 
+-ldint.dvi: ldint.texi  
++ldint.dvi: ldint.texi
+ 	$(AM_V_TEXI2DVI)TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+ 	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+ 	$(TEXI2DVI) $(AM_V_texinfo) --build-dir=$(@:.dvi=.t2d) -o $@ $(AM_V_texidevnull) \
+ 	`test -f 'ldint.texi' || echo '$(srcdir)/'`ldint.texi
+ 
+-ldint.pdf: ldint.texi  
++ldint.pdf: ldint.texi
+ 	$(AM_V_TEXI2PDF)TEXINPUTS="$(am__TEXINFO_TEX_DIR)$(PATH_SEPARATOR)$$TEXINPUTS" \
+ 	MAKEINFO='$(MAKEINFO) $(AM_MAKEINFOFLAGS) $(MAKEINFOFLAGS) -I $(srcdir)' \
+ 	$(TEXI2PDF) $(AM_V_texinfo) --build-dir=$(@:.pdf=.t2p) -o $@ $(AM_V_texidevnull) \
+ 	`test -f 'ldint.texi' || echo '$(srcdir)/'`ldint.texi
+ 
+-ldint.html: ldint.texi  
++ldint.html: ldint.texi
+ 	$(AM_V_MAKEINFO)rm -rf $(@:.html=.htp)
+ 	$(AM_V_at)if $(MAKEINFOHTML) $(AM_MAKEINFOHTMLFLAGS) $(MAKEINFOFLAGS) -I $(srcdir) \
+ 	 -o $(@:.html=.htp) `test -f 'ldint.texi' || echo '$(srcdir)/'`ldint.texi; \
+diff --git a/ld/configure.tgt b/ld/configure.tgt
+index 74ddac49863..75220c4c49f 100644
+--- a/ld/configure.tgt
++++ b/ld/configure.tgt
+@@ -98,6 +98,9 @@ aarch64-*-freebsd*)	targ_emul=aarch64fbsd
+ aarch64-*-fuchsia*)	targ_emul=aarch64elf
+ 			targ_extra_emuls="aarch64elfb armelf armelfb"
+ 			;;
++aarch64-*-sirius*)	targ_emul=elf64sirius_aarch64
++      targ_extra_emuls="aarch64elfb armelf armelfb"
++      ;;
+ aarch64_be-*-linux-gnu_ilp32)
+ 			targ_emul=aarch64linux32b
+ 			targ_extra_libpath="aarch64linuxb aarch64linux aarch64linux32 armelfb_linux_eabi armelf_linux_eabi"
+@@ -367,6 +370,9 @@ i[3-7]86-*-aros*)	targ_emul=elf_i386
+ i[3-7]86-*-rdos*)	targ_emul=elf_i386
+ 			targ_extra_emuls=elf_iamcu
+ 			;;
++i[3-7]86-*-sirius*)	targ_emul=elf_i386
++      targ_extra_emuls=elf_iamcu
++      ;;
+ i[3-7]86-*-bsd)		targ_emul=i386bsd
+ 			targ_extra_ofiles=
+ 			;;
+@@ -1004,6 +1010,8 @@ visium-*-elf)		targ_emul=elf32visium
+ 			;;
+ x86_64-*-rdos*)		targ_emul=elf64rdos
+ 			;;
++x86_64-*-sirius*)	targ_emul=elf64toaru
++      ;;
+ x86_64-*-cloudabi*)	targ_emul=elf_x86_64_cloudabi
+ 			;;
+ x86_64-*-haiku*)	targ_emul=elf_x86_64_haiku

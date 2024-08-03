@@ -1,3 +1,10 @@
+> [!WARNING]
+> SiriusOS is an pre-alpha software.
+>
+> It is not recommended to use it as daily driver.
+>
+> Especially right now with the source code reorganization and global changes in the architecture.
+
 # SiriusOS
 
 SiriusOS is a fork of [Toaru](https://github.com/klange/toaruos) operating system for x86-64 PCs and experimental support for ARMv8.

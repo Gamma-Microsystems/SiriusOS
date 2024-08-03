@@ -7,3 +7,6 @@
 [submodule "base/usr/share"]
 	path = base/usr/share
 	url = https://github.com/Gamma-Microsystems/share.git
+[submodule "lib"]
+	path = lib
+	url = https://github.com/Gamma-Microsystems/lib.git

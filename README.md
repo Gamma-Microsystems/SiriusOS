@@ -107,7 +107,7 @@ The root filesystem is set up as follows:
     - `wallpapers`: JPEG wallpapers.
 - `var`: Runtime files, including package manager manifest cache, PID files, some lock files, etc.
 
-## Running SiriusPS
+## Running SiriusOS
 
 ### VirtualBox and VMware Workstation
 

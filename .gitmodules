@@ -10,3 +10,6 @@
 [submodule "lib"]
 	path = lib
 	url = https://github.com/Gamma-Microsystems/lib.git
+[submodule "userland"]
+	path = userland
+	url = https://github.com/Gamma-Microsystems/userland.git

@@ -50,8 +50,6 @@ APPS_X=$(foreach app,$(APPS),$(BASE)/bin/$(app))
 APPS_Y=$(foreach app,$(APPS),.make/$(app).mak)
 APPS_SH=$(patsubst apps/%.sh,%.sh,$(wildcard apps/*.sh))
 APPS_SH_X=$(foreach app,$(APPS_SH),$(BASE)/bin/$(app))
-APPS_KRK=$(patsubst apps/%.krk,%.krk,$(wildcard apps/*.krk))
-APPS_KRK_X=$(foreach app,$(APPS_KRK),$(BASE)/bin/$(app))
 
 LIBS=$(patsubst lib/%.c,%,$(wildcard lib/*.c))
 LIBS_X=$(foreach lib,$(LIBS),$(BASE)/lib/libtoaru_$(lib).so)
@@ -75,7 +73,7 @@ LC = $(BASE)/lib/libc.so $(GCC_SHARED)
 $(BASE)/mod/%.ko: modules/%.c | dirs
 	${CC} -c ${KERNEL_CFLAGS} -fno-pie -mcmodel=large  -o $@ $<
 
-ramdisk.igz: $(wildcard $(BASE)/* $(BASE)/*/* $(BASE)/*/*/* $(BASE)/*/*/*/* $(BASE)/*/*/*/*/*) $(APPS_X) $(LIBS_X) $(KRK_MODS_X) $(BASE)/bin/kuroko $(BASE)/lib/ld.so $(BASE)/lib/libm.so $(APPS_KRK_X) $(KRK_MODS) $(APPS_SH_X) $(MODULES)
+ramdisk.igz: $(wildcard $(BASE)/* $(BASE)/*/* $(BASE)/*/*/* $(BASE)/*/*/*/* $(BASE)/*/*/*/*/*) $(APPS_X) $(LIBS_X) $(BASE)/lib/ld.so $(BASE)/lib/libm.so $(APPS_SH_X) $(MODULES)
 	python3 util/createramdisk.py
 
 $(BASE)/lib/ld.so: linker/linker.c $(BASE)/lib/libc.a | dirs $(LC)
@@ -83,9 +81,9 @@ $(BASE)/lib/ld.so: linker/linker.c $(BASE)/lib/libc.a | dirs $(LC)
 
 kernel/sys/version.o: ${KERNEL_SOURCES}
 
-kernel/symbols.o: ${KERNEL_ASMOBJS} ${KERNEL_OBJS} util/gensym.krk
+kernel/symbols.o: ${KERNEL_ASMOBJS} ${KERNEL_OBJS} util/gensym.py
 	-rm -f kernel/symbols.o
-	${NM} -g -f p ${KERNEL_ASMOBJS} ${KERNEL_OBJS} | kuroko util/gensym.krk > kernel/symbols.S
+	${NM} -g -f p ${KERNEL_ASMOBJS} ${KERNEL_OBJS} | kuroko util/gensym.py > kernel/symbols.S
 	${CC} -c kernel/symbols.S -o $@
 
 kernel/%.o: kernel/%.S
@@ -101,11 +99,11 @@ clean:
 	-rm -f ${KERNEL_OBJS} $(MODULES)
 	-rm -f kernel/symbols.o kernel/symbols.S ksir ksir.64
 	-rm -f ramdisk.tar ramdisk.igz 
-	-rm -f $(APPS_Y) $(LIBS_Y) $(KRK_MODS_Y) $(KRK_MODS)
-	-rm -f $(APPS_X) $(LIBS_X) $(KRK_MODS_X) $(APPS_KRK_X) $(APPS_SH_X)
+	-rm -f $(APPS_Y) $(LIBS_Y)
+	-rm -f $(APPS_X) $(LIBS_X) $(APPS_SH_X)
 	-rm -f $(BASE)/lib/crt0.o $(BASE)/lib/crti.o $(BASE)/lib/crtn.o
 	-rm -f $(BASE)/lib/libc.so $(BASE)/lib/libc.a
-	-rm -f $(LIBC_OBJS) $(BASE)/lib/ld.so $(BASE)/lib/libkuroko.so $(BASE)/lib/libm.so
+	-rm -f $(LIBC_OBJS) $(BASE)/lib/ld.so $(BASE)/lib/libm.so
 	-rm -f $(GCC_SHARED)
 	-rm -f boot/efi/*.o boot/bios/*.o
 
@@ -169,8 +167,8 @@ ifeq (,$(findstring clean,$(MAKECMDGOALS)))
 -include ${KRK_MODS_Y}
 endif
 
-.make/%.lmak: lib/%.c util/auto-dep.krk | dirs $(CRTS)
-	kuroko util/auto-dep.krk --makelib $< > $@
+.make/%.lmak: lib/%.c util/auto-dep.py | dirs $(CRTS)
+	kuroko util/auto-dep.py --makelib $< > $@
 
 .make/%.mak: apps/%.c util/auto-dep.krk | dirs $(CRTS)
 	kuroko util/auto-dep.krk --make $< > $@

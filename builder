@@ -1,6 +1,7 @@
 #! /bin/sh
 
 # Copyright (C) 2022-2024 mintsuki
+# Copyright (C) 2024 Gamma Microsystems
 
 # Redistribution and use in source and binary forms, with or without
 # modification, are permitted provided that the following conditions are met:
@@ -25,14 +26,14 @@
 
 set -e
 
-jinx_major_ver="0.2"
-jinx_minor_ver="30"
+builder_major_ver="Unstable"
+builder_minor_ver="0"
 
-jinx_version="${jinx_major_ver}.${jinx_minor_ver}"
+builder_version="${builder_major_ver}.${builder_minor_ver}"
 
-archlinux_snapshot_date="2024.07.01"
-archlinux_snapshot_b2sum=7b7e83f7141b90b5586502a2fe46c043cb4acc84efca4cd668a6644725b515c0ba0fe2e5de76ea53be6128134ae6556508a63a8ec8909fa8903ab8d97886bf22
-archlinux_snapshot_repo_date="2024/07/02"
+archlinux_snapshot_date="2024.08.01"
+archlinux_snapshot_b2sum=5ef11678ec6745ae61d74ed3223d1f69cc4413e9975a7bbd9c8e8c52acef1f1c20618db8a6786fe7cb7b3fc2b6471c279fa02f39430e087ea13abb0fb5d75bb0
+archlinux_snapshot_repo_date="2024/08/03"
 
 XSTOW_VERSION=1.1.1
 
@@ -50,7 +51,7 @@ die() {
 }
 
 if ! [ "$(uname -s)" = "Linux" ]; then
-    die "$0: Jinx only supports running on Linux hosts."
+    die "$0: Builder only supports running on Linux hosts."
 fi
 
 make_dir() {
@@ -72,25 +73,25 @@ case "$1" in
         ;;
     *)
         if [ "$(id -u)" = "0" ]; then
-            die "$0: Jinx does not support running as root."
+            die "$0: builder does not support running as root."
         fi
         ;;
 esac
 
-if [ -z "$JINX_PARALLELISM" ]; then
+if [ -z "$builder_PARALLELISM" ]; then
     max_threads_by_mem="$(( ((($(free | awk '/^Mem:/{print $2}') + 1048575) / 1048576) + 1) / 2 ))"
     parallelism="$(nproc 2>/dev/null || echo 1)"
     parallelism="$(( $parallelism < $max_threads_by_mem ? $parallelism : $max_threads_by_mem ))"
 else
-    parallelism="$JINX_PARALLELISM"
+    parallelism="$builder_PARALLELISM"
 fi
 
 build_dir="$(pwd -P)"
 
-if [ -z "$JINX_SOURCE_DIR" ]; then
+if [ -z "$builder_SOURCE_DIR" ]; then
     base_dir="$build_dir"
 else
-    base_dir="$(cd "$JINX_SOURCE_DIR" && pwd -P)"
+    base_dir="$(cd "$builder_SOURCE_DIR" && pwd -P)"
 fi
 
 script_name="$(basename "$0")"
@@ -105,25 +106,25 @@ fi
 script_dir="$(cd "${script_dir}" && pwd -P)"
 script="${script_dir}/${script_name}"
 
-if [ -z "$JINX_CONFIG_FILE" ]; then
-    JINX_CONFIG_FILE="${base_dir}/jinx-config"
+if [ -z "$builder_CONFIG_FILE" ]; then
+    builder_CONFIG_FILE="${base_dir}/builder-config"
 fi
-if ! [ -d "$(dirname "$JINX_CONFIG_FILE")" ]; then
+if ! [ -d "$(dirname "$builder_CONFIG_FILE")" ]; then
     die "$0: cannot access config file directory"
 fi
-JINX_CONFIG_FILE="$(cd "$(dirname "$JINX_CONFIG_FILE")" && pwd -P)"/"$(basename "$JINX_CONFIG_FILE")"
+builder_CONFIG_FILE="$(cd "$(dirname "$builder_CONFIG_FILE")" && pwd -P)"/"$(basename "$builder_CONFIG_FILE")"
 
-if [ -z "$JINX_CACHE_DIR" ]; then
-    JINX_CACHE_DIR="${build_dir}/.jinx-cache"
+if [ -z "$builder_CACHE_DIR" ]; then
+    builder_CACHE_DIR="${build_dir}/.builder-cache"
 fi
-if ! [ -d "$(dirname "$JINX_CACHE_DIR")" ]; then
+if ! [ -d "$(dirname "$builder_CACHE_DIR")" ]; then
     die "$0: cannot access cache directory parent"
 fi
-make_dir "$JINX_CACHE_DIR"
-JINX_CACHE_DIR="$(cd "$JINX_CACHE_DIR" && pwd -P)"
+make_dir "$builder_CACHE_DIR"
+builder_CACHE_DIR="$(cd "$builder_CACHE_DIR" && pwd -P)"
 
 in_container=false
-if [ "$script" = "//jinx" ]; then
+if [ "$script" = "//builder" ]; then
     in_container=true
 fi
 
@@ -131,13 +132,13 @@ if [ "$in_container" = "false" ]; then
     make_dir "${base_dir}/sources" "${build_dir}/host-builds" "${build_dir}/host-pkgs" "${build_dir}/builds" "${build_dir}/pkgs"
 fi
 
-pacman_cache="$JINX_CACHE_DIR/pacman"
+pacman_cache="$builder_CACHE_DIR/pacman"
 
 temp_collect=""
 trap 'rm -rf $temp_collect; trap - EXIT; exit' EXIT INT TERM QUIT HUP
 
 make_temp() {
-    tmp="$(mktemp "$JINX_CACHE_DIR/tmp.XXXXXXXX")"
+    tmp="$(mktemp "$builder_CACHE_DIR/tmp.XXXXXXXX")"
     temp_collect="${temp_collect} ${tmp}"
     if [ "$1" = "-d" ]; then
         rm -f "${tmp}"
@@ -229,7 +230,7 @@ run_in_container1() {
     run_in_cont1_root="$1"
     shift 1
 
-    "$JINX_CACHE_DIR/rbrt" \
+    "$builder_CACHE_DIR/rbrt" \
         --root "$run_in_cont1_root" rw \
         --uid 0 \
         --gid 0 \
@@ -272,37 +273,37 @@ prepare_container() {
     make_temp -d
     sysroot_dir="${tmp}"
 
-    rm -rf "$JINX_CACHE_DIR"/saved-info-dir
+    rm -rf "$builder_CACHE_DIR"/saved-info-dir
     for dep in $(cat "${deps_file}"); do
         if [ -f "${build_dir}"/pkgs/${dep}/usr/share/info/dir ]; then
-            mv "${build_dir}"/pkgs/${dep}/usr/share/info/dir "$JINX_CACHE_DIR"/saved-info-dir
+            mv "${build_dir}"/pkgs/${dep}/usr/share/info/dir "$builder_CACHE_DIR"/saved-info-dir
         fi
         copy_failed=0
         check_duplicates "${build_dir}"/pkgs/${dep} "${sysroot_dir}" || copy_failed=1
         cp -Pplr "${build_dir}"/pkgs/${dep}/. "${sysroot_dir}"/
-        if [ -f "$JINX_CACHE_DIR"/saved-info-dir ]; then
-            mv "$JINX_CACHE_DIR"/saved-info-dir "${build_dir}"/pkgs/${dep}/usr/share/info/dir
+        if [ -f "$builder_CACHE_DIR"/saved-info-dir ]; then
+            mv "$builder_CACHE_DIR"/saved-info-dir "${build_dir}"/pkgs/${dep}/usr/share/info/dir
         fi
         if [ "$copy_failed" = 1 ]; then
-            die "jinx: error: Dependency '${dep}' contains file confilcts"
+            die "builder: error: Dependency '${dep}' contains file confilcts"
         fi
     done
 
-    if [ "$JINX_NATIVE_MODE" = "yes" ] && [ -z "$cross_compile" ]; then
+    if [ "$builder_NATIVE_MODE" = "yes" ] && [ -z "$cross_compile" ]; then
         imgroot="${sysroot_dir}"
     else
         for hostdep in $(cat "${hostdeps_file}"); do
             if [ -f "${build_dir}"/host-pkgs/${hostdep}/usr/local/share/info/dir ]; then
-                mv "${build_dir}"/host-pkgs/${hostdep}/usr/local/share/info/dir "$JINX_CACHE_DIR"/saved-info-dir
+                mv "${build_dir}"/host-pkgs/${hostdep}/usr/local/share/info/dir "$builder_CACHE_DIR"/saved-info-dir
             fi
             copy_failed=0
             check_duplicates "${build_dir}"/host-pkgs/${hostdep}/usr/local "${container_pkgs}" || copy_failed=1
             cp -Pplr "${build_dir}"/host-pkgs/${hostdep}/usr/local/. "${container_pkgs}"/
-            if [ -f "$JINX_CACHE_DIR"/saved-info-dir ]; then
-                mv "$JINX_CACHE_DIR"/saved-info-dir "${build_dir}"/host-pkgs/${hostdep}/usr/local/share/info/dir
+            if [ -f "$builder_CACHE_DIR"/saved-info-dir ]; then
+                mv "$builder_CACHE_DIR"/saved-info-dir "${build_dir}"/host-pkgs/${hostdep}/usr/local/share/info/dir
             fi
             if [ "$copy_failed" = 1 ]; then
-                die "jinx: error: Dependency '${hostdep}' contains file confilcts"
+                die "builder: error: Dependency '${hostdep}' contains file confilcts"
             fi
         done
 
@@ -312,29 +313,29 @@ prepare_container() {
         for pkg in ${imagedeps}; do
             pkgset="${pkgset}${pkg}/"
 
-            if [ -f "$JINX_CACHE_DIR/sets/${pkgset}.image/.jinx-set-valid" ]; then
+            if [ -f "$builder_CACHE_DIR/sets/${pkgset}.image/.builder-set-valid" ]; then
                 continue
             fi
 
-            make_dir "$JINX_CACHE_DIR/sets/${pkgset}"
+            make_dir "$builder_CACHE_DIR/sets/${pkgset}"
 
-            cp -Pplrf "$JINX_CACHE_DIR/sets/${pkgset}../.image" "$JINX_CACHE_DIR/sets/${pkgset}.image"
+            cp -Pplrf "$builder_CACHE_DIR/sets/${pkgset}../.image" "$builder_CACHE_DIR/sets/${pkgset}.image"
 
-            rm -f "$JINX_CACHE_DIR/sets/${pkgset}.image/.jinx-set-valid"
+            rm -f "$builder_CACHE_DIR/sets/${pkgset}.image/.builder-set-valid"
 
-            if ! run_in_container1 "$JINX_CACHE_DIR/sets/${pkgset}.image" pacman --needed --noconfirm -S "${pkg}"; then
-                die 'Jinx error: Installing an imagedep failed.'
+            if ! run_in_container1 "$builder_CACHE_DIR/sets/${pkgset}.image" pacman --needed --noconfirm -S "${pkg}"; then
+                die 'builder error: Installing an imagedep failed.'
             fi
 
             # Fix permissions of files
-            for f in $(find "$JINX_CACHE_DIR/sets/${pkgset}.image" -perm 000 2>/dev/null); do
+            for f in $(find "$builder_CACHE_DIR/sets/${pkgset}.image" -perm 000 2>/dev/null); do
                 chmod 755 "$f"
             done
 
-            touch "$JINX_CACHE_DIR/sets/${pkgset}.image/.jinx-set-valid"
+            touch "$builder_CACHE_DIR/sets/${pkgset}.image/.builder-set-valid"
         done
 
-        imgroot="$JINX_CACHE_DIR/sets/${pkgset}.image"
+        imgroot="$builder_CACHE_DIR/sets/${pkgset}.image"
     fi
 }
 
@@ -353,21 +354,21 @@ run_in_container() {
         run_in_cont_colorterm="--env COLORTERM=\"$COLORTERM\""
     fi
 
-    touch "${imgroot}/jinx"
-    chmod +x "${imgroot}/jinx"
-    touch "${imgroot}/jinx-config"
+    touch "${imgroot}/builder"
+    chmod +x "${imgroot}/builder"
+    touch "${imgroot}/builder-config"
     make_dir "${imgroot}/base_dir" "${imgroot}/sources" "${imgroot}/build_dir"
 
     native_mode_mounts=""
-    if ( [ "$JINX_NATIVE_MODE" = "yes" ] && [ "$cross_compile" = "yes" ] ) || ( ! [ "$JINX_NATIVE_MODE" = "yes" ] ); then
+    if ( [ "$builder_NATIVE_MODE" = "yes" ] && [ "$cross_compile" = "yes" ] ) || ( ! [ "$builder_NATIVE_MODE" = "yes" ] ); then
         make_dir "${imgroot}/sysroot"
 
         native_mode_mounts=y
 
         run_in_cont_lang=en_US.UTF-8
     else
-        if ! [ -z "$JINX_NATIVE_LANG" ]; then
-            run_in_cont_lang="$JINX_NATIVE_LANG"
+        if ! [ -z "$builder_NATIVE_LANG" ]; then
+            run_in_cont_lang="$builder_NATIVE_LANG"
         else
             run_in_cont_lang=C
         fi
@@ -391,7 +392,7 @@ run_in_container() {
     fi
 
     if [ -z "${native_mode_mounts}" ]; then
-        "$JINX_CACHE_DIR/rbrt" \
+        "$builder_CACHE_DIR/rbrt" \
             --root "${imgroot}" \
             --uid $(id -u) \
             --gid $(id -g) \
@@ -402,11 +403,11 @@ run_in_container() {
             --env LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib64:/usr/lib \
             ${run_in_cont_term} \
             ${run_in_cont_colorterm} \
-            --env JINX_PARALLELISM="$parallelism" \
-            --env JINX_CONFIG_FILE=/jinx-config \
-            --env JINX_SOURCE_DIR=/base_dir \
-            -m"${script}":/jinx:ro \
-            -m"${JINX_CONFIG_FILE}":/jinx-config:ro \
+            --env builder_PARALLELISM="$parallelism" \
+            --env builder_CONFIG_FILE=/builder-config \
+            --env builder_SOURCE_DIR=/base_dir \
+            -m"${script}":/builder:ro \
+            -m"${builder_CONFIG_FILE}":/builder-config:ro \
             -m"${base_dir}":/base_dir${container_base_dir_ro} \
             "${shadow_git_dir_base}" \
             -m"${base_dir}"/sources:/base_dir/sources${container_sources_ro} \
@@ -415,9 +416,9 @@ run_in_container() {
             ${unshare_net_flag} \
             --workdir / \
             -- \
-            /bin/sh -c "cd /build_dir && /jinx $run_in_cont_argvar"
+            /bin/sh -c "cd /build_dir && /builder $run_in_cont_argvar"
     else
-        "$JINX_CACHE_DIR/rbrt" \
+        "$builder_CACHE_DIR/rbrt" \
             --root "${imgroot}" \
             --uid $(id -u) \
             --gid $(id -g) \
@@ -428,13 +429,13 @@ run_in_container() {
             --env LD_LIBRARY_PATH=/usr/local/lib64:/usr/local/lib:/usr/lib64:/usr/lib \
             ${run_in_cont_term} \
             ${run_in_cont_colorterm} \
-            --env JINX_PARALLELISM="$parallelism" \
-            --env JINX_CONFIG_FILE=/jinx-config \
-            --env JINX_SOURCE_DIR=/base_dir \
+            --env builder_PARALLELISM="$parallelism" \
+            --env builder_CONFIG_FILE=/builder-config \
+            --env builder_SOURCE_DIR=/base_dir \
             -m"${container_pkgs}":/usr/local:ro \
             -m"${sysroot_dir}":/sysroot:ro \
-            -m"${script}":/jinx:ro \
-            -m"${JINX_CONFIG_FILE}":/jinx-config:ro \
+            -m"${script}":/builder:ro \
+            -m"${builder_CONFIG_FILE}":/builder-config:ro \
             -m"${base_dir}":/base_dir${container_base_dir_ro} \
             "${shadow_git_dir_base}" \
             -m"${base_dir}"/sources:/base_dir/sources${container_sources_ro} \
@@ -443,10 +444,10 @@ run_in_container() {
             ${unshare_net_flag} \
             --workdir / \
             -- \
-            /bin/sh -c "cd /build_dir && /jinx $run_in_cont_argvar"
+            /bin/sh -c "cd /build_dir && /builder $run_in_cont_argvar"
     fi
 
-    rm -rf "${imgroot}/sysroot" "${imgroot}/jinx" "${imgroot}/jinx-config" "${imgroot}/base_dir" "${imgroot}/sources" "${imgroot}/build_dir"
+    rm -rf "${imgroot}/sysroot" "${imgroot}/builder" "${imgroot}/builder-config" "${imgroot}/base_dir" "${imgroot}/sources" "${imgroot}/build_dir"
 }
 
 destroy_container() {
@@ -489,7 +490,7 @@ do_fetch() {
         checksum_verified=yes
     fi
     if ! [ -z "${tarball_blake2b}" ]; then
-        actual_blake2b="$("$JINX_CACHE_DIR/b2sum" "${tarball_path}" | awk '{print $1;}')"
+        actual_blake2b="$("$builder_CACHE_DIR/b2sum" "${tarball_path}" | awk '{print $1;}')"
         if ! [ ${actual_blake2b} = ${tarball_blake2b} ]; then
             die "* error: Failed to verify BLAKE2B for ${name}.
   Expected '${tarball_blake2b}';
@@ -569,15 +570,15 @@ cont_patch() {
     if [ -d "${base_dir}"/patches/${name} ]; then
         for patch in "${base_dir}"/patches/${name}/*; do
             [ "${patch}" = "${base_dir}/patches/${name}/*" ] && break
-            [ "${patch}" = "${base_dir}"/patches/${name}/jinx-working-patch.patch ] && continue
+            [ "${patch}" = "${base_dir}"/patches/${name}/*.patch ] && continue
             patch --no-backup-if-mismatch -p1 -r "${patch_trash}" < "${patch}"
         done
     fi
 
     cp -rp "${source_dir}" "${base_dir}"/sources/${name}-clean
 
-    if [ -f "${base_dir}"/patches/${name}/jinx-working-patch.patch ]; then
-        patch --no-backup-if-mismatch -p1 -r "${patch_trash}" < "${base_dir}"/patches/${name}/jinx-working-patch.patch
+    if [ -f "${base_dir}"/patches/${name}/*.patch ]; then
+        patch --no-backup-if-mismatch -p1 -r "${patch_trash}" < "${base_dir}"/patches/${name}/*.patch
     fi
 
     cp -rp "${source_dir}" "${base_dir}"/sources/${name}-workdir
@@ -818,7 +819,7 @@ do_cmd_regenerate() {
 
         if [ -s "${patch_file}" ]; then
             make_dir "${base_dir}"/patches/$1
-            mv "${patch_file}" "${base_dir}"/patches/$1/jinx-working-patch.patch
+            mv "${patch_file}" "${base_dir}"/patches/$1/*.patch
         fi
 
         cd "${base_dir}"
@@ -984,17 +985,17 @@ cmd_install() {
 
     dup_elements="$(comm -23 "${all_files_sorted}" "${all_files_uniq}" | uniq)"
 
-    rm -f "$JINX_CACHE_DIR/merged-info-dir"
+    rm -f "$builder_CACHE_DIR/merged-info-dir"
 
     for pkg in ${pkgs_to_install}; do
         for elem in ${dup_elements}; do
             if [ -f "${build_dir}"/pkgs/${pkg}/${elem} ] || [ -L "${build_dir}"/pkgs/${pkg}/${elem} ]; then
                 if [ "${elem}" = "./usr/share/info/dir" ]; then
                     # Coalesce info directory
-                    if ! [ -f "$JINX_CACHE_DIR/merged-info-dir" ]; then
-                        cp "${build_dir}"/pkgs/${pkg}/${elem} "$JINX_CACHE_DIR/merged-info-dir"
+                    if ! [ -f "$builder_CACHE_DIR/merged-info-dir" ]; then
+                        cp "${build_dir}"/pkgs/${pkg}/${elem} "$builder_CACHE_DIR/merged-info-dir"
                     else
-                        "$JINX_CACHE_DIR/merge-info" -o "$JINX_CACHE_DIR/merged-info-dir" "${build_dir}"/pkgs/${pkg}/${elem} "$JINX_CACHE_DIR/merged-info-dir"
+                        "$builder_CACHE_DIR/merge-info" -o "$builder_CACHE_DIR/merged-info-dir" "${build_dir}"/pkgs/${pkg}/${elem} "$builder_CACHE_DIR/merged-info-dir"
                     fi
                     continue
                 fi
@@ -1008,17 +1009,17 @@ cmd_install() {
     ( cd "${build_dir}/pkgs" && rsync -urlptD ${pkg_dirs_to_install} "${sysroot_abs}"/ )
 
     # inject the merged info dir into sysroot
-    if [ -f "${sysroot}"/usr/share/info/dir ] && [ -f "$JINX_CACHE_DIR/merged-info-dir" ]; then
-        "$JINX_CACHE_DIR/merge-info" -o "${sysroot}"/usr/share/info/dir "$JINX_CACHE_DIR/merged-info-dir" "${sysroot}"/usr/share/info/dir
+    if [ -f "${sysroot}"/usr/share/info/dir ] && [ -f "$builder_CACHE_DIR/merged-info-dir" ]; then
+        "$builder_CACHE_DIR/merge-info" -o "${sysroot}"/usr/share/info/dir "$builder_CACHE_DIR/merged-info-dir" "${sysroot}"/usr/share/info/dir
     else
-        if [ -f "$JINX_CACHE_DIR/merged-info-dir" ]; then
-            cp "$JINX_CACHE_DIR/merged-info-dir" "${sysroot}"/usr/share/info/dir
+        if [ -f "$builder_CACHE_DIR/merged-info-dir" ]; then
+            cp "$builder_CACHE_DIR/merged-info-dir" "${sysroot}"/usr/share/info/dir
         fi
     fi
 }
 
 rebuild_b2sum() {
-    cat <<'EOF' >"$JINX_CACHE_DIR/b2sum.c"
+    cat <<'EOF' >"$builder_CACHE_DIR/b2sum.c"
 // This blake2b implementation comes from the GNU coreutils project.
 // https://github.com/coreutils/coreutils/blob/master/src/blake2/blake2b-ref.c
 
@@ -1265,11 +1266,11 @@ int main(int argc, char *argv[]) {
     printf("  %s\n", argv[1]);
 }
 EOF
-    cc -O2 -pipe -fno-strict-aliasing -Wall -Wextra "$JINX_CACHE_DIR/b2sum.c" -o "$JINX_CACHE_DIR/b2sum"
+    cc -O2 -pipe -fno-strict-aliasing -Wall -Wextra "$builder_CACHE_DIR/b2sum.c" -o "$builder_CACHE_DIR/b2sum"
 }
 
 rebuild_rbrt() {
-    cat <<'EOF' >"$JINX_CACHE_DIR/rbrt.c"
+    cat <<'EOF' >"$builder_CACHE_DIR/rbrt.c"
 // Written by 48cf (iretq@riseup.net)
 // Inspired heavily by https://github.com/managarm/cbuildrt/
 
@@ -1671,104 +1672,104 @@ cleanup:
     return ok;
 }
 EOF
-    cc -O2 -pipe -Wall -Wextra "$JINX_CACHE_DIR/rbrt.c" -o "$JINX_CACHE_DIR/rbrt"
+    cc -O2 -pipe -Wall -Wextra "$builder_CACHE_DIR/rbrt.c" -o "$builder_CACHE_DIR/rbrt"
 }
 
 reinit_container() {
-    chmod -R 777 "$JINX_CACHE_DIR/sets" 2>/dev/null || true
-    chmod -R 777 "$JINX_CACHE_DIR/pacman" 2>/dev/null || true
-    rm -rf "$JINX_CACHE_DIR/arch-root.tar.zst" "$JINX_CACHE_DIR/sets" "$JINX_CACHE_DIR/pacman"
+    chmod -R 777 "$builder_CACHE_DIR/sets" 2>/dev/null || true
+    chmod -R 777 "$builder_CACHE_DIR/pacman" 2>/dev/null || true
+    rm -rf "$builder_CACHE_DIR/arch-root.tar.zst" "$builder_CACHE_DIR/sets" "$builder_CACHE_DIR/pacman"
 
     make_dir "${pacman_cache}"
 
-    curl -L -o "$JINX_CACHE_DIR/arch-root.tar.zst" https://archive.archlinux.org/iso/${archlinux_snapshot_date}/archlinux-bootstrap-x86_64.tar.zst
-    if ! "$JINX_CACHE_DIR/b2sum" "$JINX_CACHE_DIR/arch-root.tar.zst" | grep "${archlinux_snapshot_b2sum}" >/dev/null 2>&1; then
-        die "Jinx: Failed to verify Arch Linux bootstrap tarball"
+    curl -L -o "$builder_CACHE_DIR/arch-root.tar.zst" https://archive.archlinux.org/iso/${archlinux_snapshot_date}/archlinux-bootstrap-x86_64.tar.zst
+    if ! "$builder_CACHE_DIR/b2sum" "$builder_CACHE_DIR/arch-root.tar.zst" | grep "${archlinux_snapshot_b2sum}" >/dev/null 2>&1; then
+        die "builder: Failed to verify Arch Linux bootstrap tarball"
     fi
-    ( cd "$JINX_CACHE_DIR" && zstdcat arch-root.tar.zst | bsdtar -xf - )
-    rm "$JINX_CACHE_DIR/arch-root.tar.zst"
-    make_dir "$JINX_CACHE_DIR/sets"
-    mv "$JINX_CACHE_DIR/root.x86_64" "$JINX_CACHE_DIR/sets/.image"
+    ( cd "$builder_CACHE_DIR" && zstdcat arch-root.tar.zst | bsdtar -xf - )
+    rm "$builder_CACHE_DIR/arch-root.tar.zst"
+    make_dir "$builder_CACHE_DIR/sets"
+    mv "$builder_CACHE_DIR/root.x86_64" "$builder_CACHE_DIR/sets/.image"
 
-    echo "Server = https://archive.archlinux.org/repos/${archlinux_snapshot_repo_date}/\$repo/os/\$arch" > "$JINX_CACHE_DIR/sets/.image/etc/pacman.d/mirrorlist"
-    echo 'en_US.UTF-8 UTF-8' > "$JINX_CACHE_DIR/sets/.image/etc/locale.gen"
-    make_dir "$JINX_CACHE_DIR/sets/.image/etc/pacman.d/gnupg"
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" locale-gen
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" pacman-key --init
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" pacman-key --populate archlinux
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" pacman --noconfirm -Sy archlinux-keyring
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" pacman --noconfirm -S pacman pacman-mirrorlist
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" pacman --noconfirm -Syu
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" sed -i "s/ check / !check /g" /etc/makepkg.conf
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j${parallelism}\"/g" /etc/makepkg.conf
+    echo "Server = https://archive.archlinux.org/repos/${archlinux_snapshot_repo_date}/\$repo/os/\$arch" > "$builder_CACHE_DIR/sets/.image/etc/pacman.d/mirrorlist"
+    echo 'en_US.UTF-8 UTF-8' > "$builder_CACHE_DIR/sets/.image/etc/locale.gen"
+    make_dir "$builder_CACHE_DIR/sets/.image/etc/pacman.d/gnupg"
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" locale-gen
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" pacman-key --init
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" pacman-key --populate archlinux
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" pacman --noconfirm -Sy archlinux-keyring
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" pacman --noconfirm -S pacman pacman-mirrorlist
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" pacman --noconfirm -Syu
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" sed -i "s/ check / !check /g" /etc/makepkg.conf
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" sed -i "s/#MAKEFLAGS=\"-j2\"/MAKEFLAGS=\"-j${parallelism}\"/g" /etc/makepkg.conf
 
     # Fix permissions of files
-    for f in $(find "$JINX_CACHE_DIR/sets/.image" -perm 000 2>/dev/null); do
+    for f in $(find "$builder_CACHE_DIR/sets/.image" -perm 000 2>/dev/null); do
         chmod 755 "$f"
     done
 
-    run_in_container1 "$JINX_CACHE_DIR/sets/.image" pacman --needed --noconfirm -S bison diffutils docbook-xsl flex gettext inetutils libtool libxslt m4 make patch perl python texinfo w3m which xmlto
+    run_in_container1 "$builder_CACHE_DIR/sets/.image" pacman --needed --noconfirm -S bison diffutils docbook-xsl flex gettext inetutils libtool libxslt m4 make patch perl python texinfo w3m which xmlto
 
     # Build xstow
-    XSTOW_BUILDENV="$JINX_CACHE_DIR/xstow_buildenv"
-    cp -Pprf "$JINX_CACHE_DIR/sets/.image/." "${XSTOW_BUILDENV}/"
+    XSTOW_BUILDENV="$builder_CACHE_DIR/xstow_buildenv"
+    cp -Pprf "$builder_CACHE_DIR/sets/.image/." "${XSTOW_BUILDENV}/"
     curl -Lo "${XSTOW_BUILDENV}/xstow-${XSTOW_VERSION}.tar.gz" https://github.com/majorkingleo/xstow/releases/download/${XSTOW_VERSION}/xstow-${XSTOW_VERSION}.tar.gz
     ( cd "${XSTOW_BUILDENV}" && gunzip < xstow-${XSTOW_VERSION}.tar.gz | tar -xf - )
     run_in_container1 "${XSTOW_BUILDENV}" pacman --needed --noconfirm -S base-devel
     run_in_container1 "${XSTOW_BUILDENV}" sh -c "cd /xstow-${XSTOW_VERSION} && ./configure LDFLAGS='-static' --enable-static --enable-merge-info --without-curses && make -j${parallelism}"
-    mv "${XSTOW_BUILDENV}/xstow-${XSTOW_VERSION}/src/merge-info" "$JINX_CACHE_DIR/"
+    mv "${XSTOW_BUILDENV}/xstow-${XSTOW_VERSION}/src/merge-info" "$builder_CACHE_DIR/"
     chmod -R 777 "$XSTOW_BUILDENV"
     rm -rf "$XSTOW_BUILDENV"
 }
 
 first_use() {
-    echo "* preparing Jinx cache..."
+    echo "* preparing builder cache..."
 
-    make_dir "$JINX_CACHE_DIR"
+    make_dir "$builder_CACHE_DIR"
 
     rebuild_b2sum
     rebuild_rbrt
 
     reinit_container
 
-    echo "$jinx_version" > "$JINX_CACHE_DIR/version"
+    echo "$builder_version" > "$builder_CACHE_DIR/version"
 
     echo "* done"
 }
 
 redo_first_use() {
-    echo "* purging old Jinx cache..."
-    chmod -R 777 "$JINX_CACHE_DIR" || true
-    rm -rf "$JINX_CACHE_DIR"
+    echo "* purging old builder cache..."
+    chmod -R 777 "$builder_CACHE_DIR" || true
+    rm -rf "$builder_CACHE_DIR"
     first_use
 }
 
 case "$1" in
     version|--version)
-        echo "Jinx version $jinx_version"
+        echo "builder version $builder_version"
         exit 0
         ;;
 esac
 
-if ! [ -f "$JINX_CONFIG_FILE" ]; then
-    die "$0: missing Jinx config file '$JINX_CONFIG_FILE'"
+if ! [ -f "$builder_CONFIG_FILE" ]; then
+    die "$0: missing builder config file '$builder_CONFIG_FILE'"
 fi
 
-. "${JINX_CONFIG_FILE}"
+. "${builder_CONFIG_FILE}"
 
-if [ -z "$JINX_MAJOR_VER" ]; then
-    die "$0: required config variable \$JINX_MAJOR_VER missing"
+if [ -z "$builder_MAJOR_VER" ]; then
+    die "$0: required config variable \$builder_MAJOR_VER missing"
 fi
 
-if ! [ "$JINX_MAJOR_VER" = "$jinx_major_ver" ]; then
-    die "$0: needed major version ($JINX_MAJOR_VER) differs from Jinx-provided major version ($jinx_major_ver)"
+if ! [ "$builder_MAJOR_VER" = "$builder_major_ver" ]; then
+    die "$0: needed major version ($builder_MAJOR_VER) differs from builder-provided major version ($builder_major_ver)"
 fi
 
-if ! [ -d "$JINX_CACHE_DIR" ]; then
+if ! [ -d "$builder_CACHE_DIR" ]; then
     first_use
 fi
 
-if ! [ -f "$JINX_CACHE_DIR/version" ] || ! [ "$(cat "$JINX_CACHE_DIR/version")" = "$jinx_version" ]; then
+if ! [ -f "$builder_CACHE_DIR/version" ] || ! [ "$(cat "$builder_CACHE_DIR/version")" = "$builder_version" ]; then
     redo_first_use
 fi
 

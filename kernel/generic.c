@@ -10,9 +10,10 @@
  * early filesystems, and is ready to yield control to init.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <kernel/generic.h>
 #include <kernel/args.h>
@@ -69,7 +70,7 @@ int generic_main(void) {
 		boot_arg = strdup(args_value("args"));
 	}
 
-	const char * boot_app = "/bin/init";
+	const char * boot_app = "/sbin/init";
 	if (args_present("init")) {
 		boot_app = args_value("init");
 	}

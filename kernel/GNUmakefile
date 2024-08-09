@@ -5,7 +5,7 @@ KBITS = 64
 
 # This is the name that our final kernel executable will have.
 # DONT change as needed.
-override KERNEL := ksir.$(BITS)
+override KERNEL := ksir.$(KBITS)
 
 # Convenience macro to reliably declare user overridable variables.
 define DEFAULT_VAR =
@@ -64,8 +64,8 @@ override KCFLAGS += \
     -Wno-unused-parameter \
     -Wstrict-prototypes \
     -pedantic \
-    -Wwrite-strings
-    -D_KERNEL_
+    -Wwrite-strings \
+    -D_KERNEL_ \
     -DKERNEL_ARCH=$(KARCH)
 
 # Internal C preprocessor flags that should not be changed by the user.

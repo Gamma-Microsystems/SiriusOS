@@ -35,3 +35,6 @@
 /.arch
 /kernel8.img
 /kernel8.img.elf
+kernel/bin/
+kernel/obj/
+kernel/Makefile # Unfinished stuff

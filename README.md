@@ -60,6 +60,7 @@ The following projects are currently in progress:
   - **mips**
   - **riscv**
   - **arm32**
+  - **LoongArch64**
 
 ### Project Layout
 
@@ -67,8 +68,7 @@ The following projects are currently in progress:
 - **base** - Ramdisk root filesystem staging directory. Includes C headers in `base/usr/include`, as well as graphical resources for the compositor and window decorator.
 - **boot** - BIOS and EFI loader with interactive menus.
 - **build** - Auxiliary build scripts for platform ports.
-- **kernel** - The kSir (Misaka) kernel.
-- **kuroko** - Submodule checkout of the Kuroko interpreter.
+- **kernel** - The kSir (Misaka New Generation) kernel.
 - **lib** - Userspace libraries.
 - **libc** - C standard library implementation.
 - **linker** - Userspace dynamic linker/loader, implements shared library support.

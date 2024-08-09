@@ -145,7 +145,7 @@ override KLDFLAGS += \
     -nostdlib \
     -static \
     -z max-page-size=0x1000 \
-    -T ../link.ld
+    -T ../ld/link.ld
 
 # Use "find" to glob all *.c, *.S files in the tree and obtain the
 # object and header dependency file names.
@@ -159,7 +159,7 @@ override HEADER_DEPS := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.d) $(ASFILES:.S
 all: bin-$(KARCH)/$(KERNEL)
 
 # Link rules for the final kernel executable.
-bin-$(KARCH)/$(KERNEL): GNUmakefile ../link.ld $(OBJ)
+bin-$(KARCH)/$(KERNEL): GNUmakefile ../ld/link.ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
 	$(KLD) $(OBJ) $(KLDFLAGS) -o $@
 

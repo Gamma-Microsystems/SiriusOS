@@ -2,7 +2,7 @@
  * @file  kernel/misc/malloc.c
  * @brief klange's Slab Allocator
  *
- * This is one of the oldest parts of ToaruOS: the infamous heap allocator.
+ * This is one of the oldest parts of SiriusOS: the infamous heap allocator.
  * Used in userspace and the kernel alike, this is a straightforward "slab"-
  * style allocator. It has a handful of fixed sizes to stick small objects
  * in and keeps several together in a single page. It's surprisingly fast,
@@ -15,7 +15,7 @@
  *       freed blocks. There's #if 0'd code dating back over a decade in here.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (c) 2010-2021 K. Lange.  All rights reserved.
  *
@@ -473,7 +473,7 @@ static void * klmalloc_stack_pop(klmalloc_bin_header *header) {
 		assert((uintptr_t)header->head < (uintptr_t)header + PAGE_SIZE);
 		assert((uintptr_t)header->head > (uintptr_t)header + sizeof(klmalloc_bin_header) - 1);
 	}
-	
+
 	/*
 	 * Remove the current head and point
 	 * the head to where the old head pointed.
@@ -716,7 +716,7 @@ static void klfree(void *ptr) {
 	if (bucket_id > (uintptr_t)NUM_BINS) {
 		bucket_id = BIG_BIN;
 		klmalloc_big_bin_header *bheader = (klmalloc_big_bin_header*)header;
-		
+
 		assert(bheader);
 		assert(bheader->head == NULL);
 		assert((bheader->size + sizeof(klmalloc_big_bin_header)) % PAGE_SIZE == 0);
@@ -914,7 +914,7 @@ static void * __attribute__ ((malloc)) klcalloc(uintptr_t nmemb, uintptr_t size)
 	/*
 	 * Allocate memory and zero it before returning
 	 * a pointer to the newly allocated memory.
-	 * 
+	 *
 	 * Implemented by way of a simple malloc followed
 	 * by a memset to 0x00 across the length of the
 	 * requested memory chunk.
@@ -926,5 +926,3 @@ static void * __attribute__ ((malloc)) klcalloc(uintptr_t nmemb, uintptr_t size)
 	return ptr;
 }
 /* }}} */
-
-

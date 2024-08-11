@@ -3,7 +3,7 @@
  * @brief Methods for parsing device tree binaries
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2022 K. Lange
  */
@@ -237,4 +237,3 @@ void dtb_device(void) {
 	fnode->read    = read_dtb;
 	vfs_mount("/dev/dtb", fnode);
 }
-

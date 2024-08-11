@@ -141,11 +141,12 @@ else
 endif
 
 # Internal linker flags that should not be changed by the user.
+# TODO: Add RPI4 specific stuff
 override KLDFLAGS += \
     -nostdlib \
     -static \
     -z max-page-size=0x1000 \
-    -T ../ld/link.ld
+    -T arch/$(KARCH)/link.ld
 
 # Use "find" to glob all *.c, *.S files in the tree and obtain the
 # object and header dependency file names.

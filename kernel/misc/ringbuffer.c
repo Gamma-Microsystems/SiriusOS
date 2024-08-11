@@ -6,7 +6,7 @@
  * blocking reads and writes.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2013-2021 K. Lange
  */
@@ -213,4 +213,3 @@ void ring_buffer_eof(ring_buffer_t * ring_buffer) {
 	wakeup_queue(ring_buffer->wait_queue_readers);
 	wakeup_queue(ring_buffer->wait_queue_writers);
 }
-

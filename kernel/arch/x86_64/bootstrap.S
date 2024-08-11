@@ -2,13 +2,13 @@
  * @file  kernel/arch/x86_64/bootstrap.c
  * @brief x86-64 entrypoint from bootloader
  *
- * This is primarily adapted from Toaru's 32-bit mulitboot bootstrap.
+ * This is primarily adapted from Sirius's 32-bit mulitboot bootstrap.
  * Instead of jumping straight to our C entry point, however, we need
  * to (obviously) get ourselves set up for long mode first by setting
  * up initial page tables, etc.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
  */

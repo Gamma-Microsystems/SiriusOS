@@ -5,7 +5,7 @@
  * Frame allocation and mapping routines for x86-64.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
  */
@@ -1296,5 +1296,3 @@ int mmu_validate_user_pointer(const void * addr, size_t size, int flags) {
 
 	return 1;
 }
-
-

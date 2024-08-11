@@ -3,7 +3,7 @@
  * @brief Rudimentary serial driver for the rpi's miniuart
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2022 K. Lange
  */
@@ -153,4 +153,3 @@ void miniuart_start(void) {
 
 	spawn_worker_thread(miniuart_thread, "[miniuart]", uart_mapped);
 }
-

@@ -3,7 +3,7 @@
  * @brief Rudimentary serial driver for the pl011 uart
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2022 K. Lange
  */
@@ -80,5 +80,3 @@ void pl011_start(void) {
 	void * uart_mapped = mmu_map_mmio_region(uart_base, 0x1000);
 	spawn_worker_thread(pl011_thread, "[pl011]", uart_mapped);
 }
-
-

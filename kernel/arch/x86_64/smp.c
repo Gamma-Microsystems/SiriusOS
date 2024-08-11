@@ -5,7 +5,7 @@
  * Locates and bootstraps APs using ACPI MADT tables.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
  */
@@ -337,7 +337,7 @@ void smp_initialize(void) {
 		scan_top = scan + 0x100000;
 	} else if (mboot_struct->config_table) {
 		/*
-		 * @warning This is specific to ToaruOS's native loader.
+		 * @warning This is specific to SiriusOS's native loader.
 		 * We steal the config_table entry in our EFI loader to pass the RSDP,
 		 * just like a multiboot2 loader would...
 		 */

@@ -5,7 +5,7 @@
  * Provides a terrible little xorshift random number generator.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2014-2018 K. Lange
  */
@@ -53,4 +53,3 @@ void random_initialize(void) {
 	vfs_mount("/dev/random", random_device_create());
 	vfs_mount("/dev/urandom", random_device_create());
 }
-

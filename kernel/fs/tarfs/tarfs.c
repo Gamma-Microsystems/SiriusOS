@@ -3,7 +3,7 @@
  * @brief Read-only filesystem driver for ustar archives.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2018 K. Lange
  */
@@ -49,7 +49,7 @@ struct ustar {
 };
 
 static unsigned int interpret_uid(struct ustar * file) {
-	return 
+	return
 		((file->ownerid[0] - '0') << 18) |
 		((file->ownerid[1] - '0') << 15) |
 		((file->ownerid[2] - '0') << 12) |
@@ -60,7 +60,7 @@ static unsigned int interpret_uid(struct ustar * file) {
 }
 
 static unsigned int interpret_gid(struct ustar * file) {
-	return 
+	return
 		((file->groupid[0] - '0') << 18) |
 		((file->groupid[1] - '0') << 15) |
 		((file->groupid[2] - '0') << 12) |
@@ -71,7 +71,7 @@ static unsigned int interpret_gid(struct ustar * file) {
 }
 
 static unsigned int interpret_mode(struct ustar * file) {
-	return 
+	return
 		((file->mode[0] - '0') << 18) |
 		((file->mode[1] - '0') << 15) |
 		((file->mode[2] - '0') << 12) |
@@ -496,4 +496,3 @@ int tarfs_register_init(void) {
 	vfs_register("tar", tar_mount);
 	return 0;
 }
-

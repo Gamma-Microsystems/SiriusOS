@@ -24,7 +24,7 @@
  * If a quoted value is not properly terminated with an unescaped
  * double quote character, the entire argument will be ignored.
  *
- * @copyright This file is part of ToaruOS and is released under the terms
+ * @copyright This file is part of SiriusOS and is released under the terms
  *            of the NCSA / University of Illinois License - see LICENSE.md
  *            Copyright (C) 2011-2023 K. Lange
  */
@@ -153,4 +153,3 @@ char * args_from_procfs(void) {
 }
 
 #endif
-

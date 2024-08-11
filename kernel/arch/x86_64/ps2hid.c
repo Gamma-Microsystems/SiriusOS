@@ -5,7 +5,7 @@
  * This is the slightly less terrible merged PS/2 mouse+keyboard driver.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2014-2021 K. Lange
  */
@@ -246,7 +246,7 @@ static int ioctl_mouse(fs_node_t * node, unsigned long request, void * argp) {
 /**
  * @brief Read one byte from the keyboard.
  *
- * We give userspace the keyboard scancodes directly, and libtoaru_kbd
+ * We give userspace the keyboard scancodes directly, and libSirius_kbd
  * handles translation to a more usable format. This is probably not
  * the best way to do this...
  */
@@ -385,4 +385,3 @@ void ps2hid_install(void) {
 		irq_install_handler(MOUSE_IRQ,    mouse_handler,    "ps2hid");
 	}
 }
-

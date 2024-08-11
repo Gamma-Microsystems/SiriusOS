@@ -9,7 +9,7 @@
  * that have been preconfigured by the bootloader.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2012-2021 K. Lange
  */
@@ -570,4 +570,3 @@ int framebuffer_initialize(void) {
 
 	return 0;
 }
-

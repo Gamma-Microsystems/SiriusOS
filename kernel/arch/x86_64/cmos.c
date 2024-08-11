@@ -9,7 +9,7 @@
  * and triggers timeout-based wakeups.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
  */
@@ -414,4 +414,3 @@ void arch_update_clock(void) {
 	/* Wake up any processes that have expired timeouts */
 	wakeup_sleepers(timer_ticks, timer_subticks);
 }
-

@@ -3,7 +3,7 @@
  * @brief Rudimentary, hacky implementations of virtio input devices.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021-2022 K. Lange
  */
@@ -107,4 +107,3 @@ void gic_map_pci_interrupt(const char * name, uint32_t device, int * int_out, in
 		}
 	}
 }
-

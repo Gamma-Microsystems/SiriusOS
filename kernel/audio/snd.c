@@ -1,6 +1,6 @@
 /**
  * @file  kernel/audio/snd.c
- * @brief Gerow's Audio Subsystem for ToaruOS
+ * @brief Gerow's Audio Subsystem for SiriusOS
  *
  * Simple generic mixer interface. Allows userspace to pipe audio data
  * to the kernel audio drivers and control volume knobs.
@@ -11,7 +11,7 @@
  * really support multiple devices despite the interface suggesting it might...
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2015-2021 K. Lange
  * Copyright (C) 2015 Mike Gerow
@@ -288,4 +288,3 @@ void snd_install(void) {
 	vfs_mount("/dev/dsp", &_dsp_fnode);
 	vfs_mount("/dev/mixer", &_mixer_fnode);
 }
-

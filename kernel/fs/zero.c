@@ -3,7 +3,7 @@
  * @brief /dev/null and /dev/zero provider.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2014-2018 K. Lange
  */
@@ -89,4 +89,3 @@ void zero_initialize(void) {
 	vfs_mount("/dev/null", null_device_create());
 	vfs_mount("/dev/zero", zero_device_create());
 }
-

@@ -9,7 +9,7 @@
  * load address, and then jumps to it.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2022 K. Lange
  */
@@ -389,7 +389,7 @@ static void bootstub_read_kernel(uintptr_t kernel_load_addr) {
 				printf("bootstub: 0x%04x %s (%d bytes)\n",
 					file.select, file.name, file.size);
 
-				if (!strcmp(file.name,"opt/org.toaruos.kernel")) {
+				if (!strcmp(file.name,"opt/org.Siriusos.kernel")) {
 					printf("bootstub: Found kernel, loading\n");
 					uint8_t * x = (uint8_t*)kernel_load_addr;
 

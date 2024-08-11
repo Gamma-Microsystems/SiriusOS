@@ -8,7 +8,7 @@
  * be a static binary. This loader is platform-generic.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021-2023 K. Lange
  */
@@ -128,7 +128,7 @@ int elf_module(char ** args) {
 		/* Uh, we should be able to figure out how many symbols we have by doing something less dumb than
 		 * just checking the size of the section, right? */
 		for (unsigned int sym = 0; sym < sectionHeader->sh_size / sizeof(Elf64_Sym); ++sym) {
-			/* Unlike the previous implementation of this module loader in toaru32,
+			/* Unlike the previous implementation of this module loader in Sirius32,
 			 * we specifically do not support binding symbols directly from newly
 			 * loaded modules. If a module wants to expose symbols, it should use
 			 * @c ksym_bind to supply new symbol names to the symbol table. */

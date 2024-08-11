@@ -6,11 +6,11 @@
  *
  * @warning Here be dragons
  *
- * This VFS implementation comes from toaru32. It has a lot of weird
+ * This VFS implementation comes from sirius32. It has a lot of weird
  * quirks and doesn't quite work like a typical Unix VFS would.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2011-2021 K. Lange
  * Copyright (C) 2014 Lioncash
@@ -1017,7 +1017,7 @@ fs_node_t *kopen_recur(const char *filename, uint64_t flags, uint64_t symlink_de
 	if (!node_ptr) return NULL;
 
 	do {
-		/* 
+		/*
 		 * This test is a little complicated, but we basically always resolve symlinks in the
 		 * of a path (like /home/symlink/file) even if O_NOFOLLOW and O_PATH are set. If we are
 		 * on the leaf of the path then we will look at those flags and act accordingly
@@ -1042,7 +1042,7 @@ fs_node_t *kopen_recur(const char *filename, uint64_t flags, uint64_t symlink_de
 				free(node_ptr);
 				return NULL;
 			}
-			/* 
+			/*
 			 * This may actually be big enough that we wouldn't want to allocate it on
 			 * the stack, especially considering this function is called recursively
 			 */
@@ -1130,4 +1130,3 @@ fs_node_t *kopen(const char *filename, unsigned int flags) {
 
 	return kopen_recur(filename, flags, 0, (char *)(this_core->current_process->wd_name));
 }
-

@@ -5,7 +5,7 @@
  * Provides a seek/read/write interface to x86 ports at /dev/port
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2018-2021 K. Lange
  */

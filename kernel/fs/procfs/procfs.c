@@ -15,7 +15,7 @@
  * changed from newly generated data.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2014-2023 K. Lange
  */
@@ -796,4 +796,3 @@ void procfs_initialize(void) {
 
 	//debug_print_vfs_tree();
 }
-

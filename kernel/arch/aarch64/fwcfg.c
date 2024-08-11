@@ -3,7 +3,7 @@
  * @brief Methods for dealing with QEMU's fw-cfg interface on aarch64.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021-2022 K. Lange
  */
@@ -73,7 +73,7 @@ void fwcfg_load_initrd(uintptr_t * ramdisk_phys_base, size_t * ramdisk_size) {
 				file.size = swizzle(file.size);
 				file.select = swizzle16(file.select);
 
-				if (!strcmp(file.name,"opt/org.toaruos.initrd")) {
+				if (!strcmp(file.name,"opt/org.siriusos.initrd")) {
 					dprintf("fw-cfg: initrd found\n");
 					z_pages = (file.size + 0xFFF) / 0x1000;
 					z = ramdisk_map_start;
@@ -130,4 +130,3 @@ void fwcfg_load_initrd(uintptr_t * ramdisk_phys_base, size_t * ramdisk_size) {
 		}
 	}
 }
-

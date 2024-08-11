@@ -3,7 +3,7 @@
  * @brief PTY driver.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2013-2021 K. Lange
  */
@@ -273,7 +273,7 @@ int pty_ioctl(pty_t * pty, unsigned long request, void * argp) {
 	switch (request) {
 		case IOCTLDTYPE:
 			/*
-			 * This is a special toaru-specific call to get a simple
+			 * This is a special Sirius-specific call to get a simple
 			 * integer that describes the kind of device this is.
 			 * It's more specific than just "character device" or "file",
 			 * but for here we just need to say we're a TTY.

@@ -3,7 +3,7 @@
  * @brief IPv4, TCP, UDP protocol implementation.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
  */
@@ -342,7 +342,7 @@ static int tcp_ack(fs_node_t * nic, sock_t * sock, struct ipv4_packet * packet, 
 			ntohl(tcp->seq_number), sock->priv32[1]);
 #endif
 		//window_size = 300;
-		
+
 		retval = 0;
 		send_thrice = 1;
 	} else {

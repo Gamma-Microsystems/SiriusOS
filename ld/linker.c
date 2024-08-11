@@ -17,9 +17,10 @@
  * to load Python C modules.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2016-2021 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <stdlib.h>
 #include <stdint.h>
@@ -62,7 +63,7 @@ static void free(void * ptr) {
 
 static int __trace_ld = 0;
 
-#include <toaru/trace.h>
+#include <sirius/trace.h>
 
 /*
  * This libraries are included in source form to avoid having
@@ -298,7 +299,7 @@ static uintptr_t object_load(elf_t * object, uintptr_t base) {
 				{
 					/* Request memory to load this PHDR into */
 					char * args[] = {(char *)(base + phdr.p_vaddr), (char *)phdr.p_memsz};
-					sysfunc(TOARU_SYS_FUNC_MMAP, args);
+					sysfunc(SIRIUS_SYS_FUNC_MMAP, args);
 
 					/* Copy the code into memory */
 					fseek(object->file, phdr.p_offset, SEEK_SET);
@@ -642,7 +643,7 @@ static int object_relocate(elf_t * object) {
 						{
 							char msg[200];
 							snprintf(msg, 200, "Unimplemented relocation (%d) requested, bailing.\n", type);
-							sysfunc(TOARU_SYS_FUNC_LOGHERE, (char**)msg);
+							sysfunc(SIRIUS_SYS_FUNC_LOGHERE, (char**)msg);
 							exit(1);
 						}
 						TRACE_LD("Unknown relocation type: %d", type);
@@ -1056,7 +1057,7 @@ nope:
 	/* Move heap start (kind of like a weird sbrk) */
 	{
 		char * args[] = {(char*)end_addr};
-		sysfunc(TOARU_SYS_FUNC_SETHEAP, args);
+		sysfunc(SIRIUS_SYS_FUNC_SETHEAP, args);
 	}
 
 	/* Call constructors for loaded dependencies */

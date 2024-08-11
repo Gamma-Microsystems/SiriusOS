@@ -35,5 +35,5 @@
 /.arch
 /kernel8.img
 /kernel8.img.elf
-kernel/bin/
-kernel/obj/
+kernel/bin*/
+kernel/obj*/

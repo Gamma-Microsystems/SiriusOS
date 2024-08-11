@@ -1,6 +1,6 @@
 # ELF Shared Library Dynamic Linker/Loader
 
-ToaruOS employs *shared objects* to allow for smaller on-disk binary sizes and provide runtime loading and linking.
+SiriusOS employs *shared objects* to allow for smaller on-disk binary sizes and provide runtime loading and linking.
 
 The linker here becomes `/lib/ld.so` and is called as the interpreter for dynamically-linked binaries in the OS.
 

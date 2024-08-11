@@ -160,7 +160,7 @@ override HEADER_DEPS := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.d) $(ASFILES:.S
 all: bin-$(KARCH)/$(KERNEL)
 
 # Link rules for the final kernel executable.
-bin-$(KARCH)/$(KERNEL): GNUmakefile ../ld/link.ld $(OBJ)
+bin-$(KARCH)/$(KERNEL): GNUmakefile arch/$(KARCH)/link.ld $(OBJ)
 	mkdir -p "$$(dirname $@)"
 	$(KLD) $(OBJ) $(KLDFLAGS) -o $@
 

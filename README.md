@@ -62,7 +62,7 @@ The following projects are currently in progress:
   - **arm32**
   - **LoongArch64**
 
-## Future Goals / Unstarted stuff
+## Future Goals / Longbox
 - **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.
 
 ### Project Layout

@@ -152,6 +152,8 @@ override KLDFLAGS += \
 # object and header dependency file names.
 override CFILES := $(shell find -L * -type f -name '*.c')
 override ASFILES := $(shell find -L * -type f -name '*.S')
+override ARCH_OBJS := $(filter-out obj-%/%.o,$(OBJ))
+override ARCH_DEPS := $(filter-out obj-%/%.d,$(HEADER_DEPS))
 override OBJ := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o))
 override HEADER_DEPS := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 

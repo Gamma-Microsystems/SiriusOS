@@ -175,10 +175,12 @@ bin-$(KARCH)/$(KERNEL): GNUmakefile arch/$(KARCH)/link.ld $(OBJ)
 
 obj-$(KARCH)/%.c.o: %.c GNUmakefile
 				mkdir -p "$$(dirname $@)"
+				@echo -e '\x1b[32mCC  \x1b[0m' $@
 				$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
 obj-$(KARCH)/%.S.o: %.S GNUmakefile
 				mkdir -p "$$(dirname $@)"
+				@echo -e '\x1b[32mAS  \x1b[0m' $@
 				$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
 # Remove object files and the final executable.

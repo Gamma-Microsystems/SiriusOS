@@ -9,9 +9,9 @@
 
 SiriusOS is a fork of [Toaru](https://github.com/klange/toaruos) operating system for x86-64 PCs and experimental support for ARMv8.
 
-
-
 Some features like kuroko was removed due to inactivity
+
+Also we created an distribution creation [guide](docs/CreatingDistribution.md) on kSir (misaka) kernel.
 
 ## History
 

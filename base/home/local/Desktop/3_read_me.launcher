@@ -1,3 +1,3 @@
 icon=file
-run=exec terminal bim ~/README.md
+run=exec terminal echo "Under Construction"
 title=Read Me

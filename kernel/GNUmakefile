@@ -34,7 +34,7 @@ override DEFAULT_KLD := ld.lld
 $(eval $(call DEFAULT_VAR,KLD,$(DEFAULT_KLD)))
 
 # User controllable C flags.
-override DEFAULT_KCFLAGS := -g -Os -pipe
+override DEFAULT_KCFLAGS := -g -pipe
 $(eval $(call DEFAULT_VAR,KCFLAGS,$(DEFAULT_KCFLAGS)))
 
 # User controllable C preprocessor flags. We set none by default.
@@ -70,7 +70,7 @@ override KCFLAGS += \
 
 # Internal C preprocessor flags that should not be changed by the user.
 override KCPPFLAGS := \
-    -I src \
+    -I../base/usr/include \
     $(KCPPFLAGS) \
     -MMD \
     -MP
@@ -150,8 +150,8 @@ override KLDFLAGS += \
 
 # Use "find" to glob all *.c, *.S files in the tree and obtain the
 # object and header dependency file names.
-override CFILES := $(shell cd src && find -L * -type f -name '*.c')
-override ASFILES := $(shell cd src && find -L * -type f -name '*.S')
+override CFILES := $(shell find -L * -type f -name '*.c')
+override ASFILES := $(shell find -L * -type f -name '*.S')
 override OBJ := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o))
 override HEADER_DEPS := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.d) $(ASFILES:.S=.S.d))
 

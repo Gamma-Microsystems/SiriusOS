@@ -51,7 +51,6 @@ The following projects are currently in progress:
 - **Partial kernel rewrite**
   - **Hybrid kernel --> Microkernel**
 - **Rewrite the network stack** for greater throughput, stability, and server support.
-- **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.
 - **Support more hardware** with new device drivers for AHCI, USB, virtio devices, etc.
 - **Continue to improve the C library** which remains quite incomplete compared to Newlib and is a major source of issues with bringing back old ports.
 - **More architectures**
@@ -62,6 +61,9 @@ The following projects are currently in progress:
   - **riscv**
   - **arm32**
   - **LoongArch64**
+
+## Future Goals / Unstarted stuff
+- **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.
 
 ### Project Layout
 

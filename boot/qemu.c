@@ -61,7 +61,7 @@ int detect_qemu(void) {
 			for (int j = 0; j < sizeof(struct fw_cfg_file); ++j) {
 				tmp[j] = inportb(0x511);
 			}
-			if (!strcmp(file.name,"opt/org.toaruos.bootmode")) {
+			if (!strcmp(file.name,"opt/org.siriusos.bootmode")) {
 				swap_bytes(&file.size, 4);
 				swap_bytes(&file.select, 2);
 				bootmode_size = file.size;
@@ -88,4 +88,3 @@ int detect_qemu(void) {
 	}
 	return 0;
 }
-

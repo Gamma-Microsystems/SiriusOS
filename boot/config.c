@@ -9,9 +9,10 @@
  * add toggles for command line options, and so on.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2018-2021 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <stdint.h>
 #include <stddef.h>
@@ -24,7 +25,7 @@
 #include "editor.h"
 
 /* Basic text strings */
-#define BASE_VERSION "ToaruOS Bootloader v5.0"
+#define BASE_VERSION "SiriusOS Bootloader v1.0"
 char * VERSION_TEXT = BASE_VERSION
 #ifdef EFI_PLATFORM
 	" (EFI)";
@@ -33,8 +34,8 @@ char * VERSION_TEXT = BASE_VERSION
 #endif
 char * HELP_TEXT = "<Enter> to boot, <e> to edit, or select a menu option with \030/\031/\032/\033.";
 char * HELP_TEXT_OPT = "<Enter> to toggle, or select another option with \030/\031/\032/\033.";
-char * COPYRIGHT_TEXT = "ToaruOS is free software under the NCSA license.";
-char * LINK_TEXT = "https://toaruos.org - https://github.com/klange/toaruos";
+char * COPYRIGHT_TEXT = "SiriusOS is free software under the NCSA license.";
+char * LINK_TEXT = "https://gamma63.w10.site/html5/index.html - https://github.com/Gamma-Microsystems/SiriusOS";
 
 /* Boot command line strings */
 #define DEFAULT_ROOT_CMDLINE "root=/dev/ram0 "

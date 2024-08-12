@@ -484,9 +484,9 @@ vbe_cont_info_mode_seg:
 	.zero 494
 
 str_Need_long:
-	.asciz "ToaruOS 2.0 requires a 64-bit processor."
+	.asciz "SiriusOS requires a 64-bit processor."
 str_More_mem:
-	.asciz "ToaruOS 2.0 needs at least 128MiB of RAM, and 1GiB is recommended."
+	.asciz "SiriusOS needs at least 128MiB of RAM, and 1GiB is recommended."
 
 .global disk_space
 disk_space:

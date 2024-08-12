@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 export-cmd HOSTNAME cat /etc/hostname
 

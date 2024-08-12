@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 if not stat -Lq /dev/cdrom0 then exit 0
 
@@ -11,4 +11,3 @@ mount iso /dev/cdrom0 /cdrom
 if not stat -Lq /cdrom/bootcat then exit 0
 
 echo -e "icon=cd\nrun=cd /cdrom ; exec file-browser\ntitle=CD-ROM" > /home/local/Desktop/5_cdrom.launcher
-

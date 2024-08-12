@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 if kcmdline -q no-startup-dhcp then exit 0
 

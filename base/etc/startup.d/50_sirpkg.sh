@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 if kcmdline -q no-startup-sirpkg then exit 0
 

@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 echo -n "Installing device driver modules..." > /dev/pex/splash
 

@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 if not kcmdline -q migrate then exit 0
 

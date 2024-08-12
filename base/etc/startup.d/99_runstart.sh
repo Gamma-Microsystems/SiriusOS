@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 export-cmd START kcmdline -g start
 
@@ -15,4 +15,3 @@ echo -n "!quit" > /dev/pex/splash
 if equals? "$START" "--vga" then exec /bin/terminal-vga -l
 if equals? "$START" "--headless" then exec /bin/getty ${GETTY_ARGS}
 if empty? "$START" then exec /bin/compositor else exec /bin/compositor $START
-

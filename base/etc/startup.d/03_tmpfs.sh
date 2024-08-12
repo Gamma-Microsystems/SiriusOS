@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 echo -n "Mounting tmpfs..." > /dev/pex/splash
 mount tmpfs tmp,777 /tmp

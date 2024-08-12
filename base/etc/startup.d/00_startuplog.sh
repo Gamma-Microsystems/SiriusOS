@@ -1,4 +1,4 @@
-#!/bin/esh
+#!/bin/nesh
 
 # This daemonizes
 exec splash-log

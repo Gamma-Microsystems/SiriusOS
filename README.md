@@ -49,6 +49,7 @@ The following projects are currently in progress:
   - **Bring back ports** from ToaruOS "Legacy", like muPDF and Mesa.
 - **Binary compatibility with ToaruOS**
 - **Partial kernel rewrite**
+  - **Hybrid kernel --> Microkernel**
 - **Rewrite the network stack** for greater throughput, stability, and server support.
 - **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.
 - **Support more hardware** with new device drivers for AHCI, USB, virtio devices, etc.

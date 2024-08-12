@@ -18,4 +18,4 @@ You can use [SiriusOS bootloader](../boot), grub, limine, easyboot, etc.
 But if you came here from linux distrodev we recommend you to use grub
 
 # Termination
-Now you decide, how do you want to build your OS, where you will host etc.
+Now you decide, how do you want to build your OS, where you will host it, etc.

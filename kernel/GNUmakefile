@@ -148,10 +148,14 @@ override KLDFLAGS += \
     -z max-page-size=0x1000 \
     -T arch/$(KARCH)/link.ld
 
-# Use "find" to glob all *.c, *.S files in the tree and obtain the
-# object and header dependency file names.
-override CFILES := $(shell find -L * -type f -name '*.c')
-override ASFILES := $(shell find -L * -type f -name '*.S')
+CFILES_x86_64 := $(shell find arch/x86_64 -type f -name '*.c')
+ASFILES_x86_64 := $(shell find arch/x86_64 -type f -name '*.S')
+
+CFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.c')
+ASFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.S')
+
+override CFILES := $(if $(findstring x86_64, $(KARCH)), $(CFILES_x86_64), $(CFILES_aarch64))
+override ASFILES := $(if $(findstring x86_64, $(KARCH)), $(ASFILES_x86_64), $(ASFILES_aarch64))
 override ARCH_OBJS := $(filter-out obj-%/%.o,$(OBJ))
 override ARCH_DEPS := $(filter-out obj-%/%.d,$(HEADER_DEPS))
 override OBJ := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o))
@@ -169,15 +173,13 @@ bin-$(KARCH)/$(KERNEL): GNUmakefile arch/$(KARCH)/link.ld $(OBJ)
 # Include header dependencies.
 -include $(HEADER_DEPS)
 
-# Compilation rules for *.c files.
 obj-$(KARCH)/%.c.o: %.c GNUmakefile
-	mkdir -p "$$(dirname $@)"
-	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
+				mkdir -p "$$(dirname $@)"
+				$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
-# Compilation rules for *.S files.
 obj-$(KARCH)/%.S.o: %.S GNUmakefile
-	mkdir -p "$$(dirname $@)"
-	$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
+				mkdir -p "$$(dirname $@)"
+				$(KCC) $(KCFLAGS) $(KCPPFLAGS) -c $< -o $@
 
 # Remove object files and the final executable.
 .PHONY: clean

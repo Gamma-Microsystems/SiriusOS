@@ -10,6 +10,7 @@
  * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2021 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <kernel/printf.h>
 #include <kernel/string.h>
@@ -31,7 +32,7 @@ static char term_buf[1024] = {0};
 static int term_buf_c = 0;
 
 /* Bitmap font details */
-#include "../../apps/terminal-font.h"
+#include "../../userland/terminal/terminal-font.h"
 #define char_height LARGE_FONT_CELL_HEIGHT
 #define char_width  LARGE_FONT_CELL_WIDTH
 

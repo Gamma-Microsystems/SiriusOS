@@ -1,4 +1,4 @@
-> [!WARNING]
+> [!IMPORTANT]
 > SiriusOS is an pre-alpha software.
 >
 > It is not recommended to use it as daily driver.

@@ -16,9 +16,11 @@ ASFILES_x86_64 := $(shell find arch/x86_64 -type f -name '*.S')
 
 CFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.c')
 ASFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.S')
+CFILES_UNIVERSAL := $(shell find audio fs misc net sys video -type f -name '*.c')
+ASFILES_UNIVERSAL := $(shell find audio fs misc net sys video -type f -name '*.S')
 
-override CFILES := $(if $(findstring x86_64, $(KARCH)), $(CFILES_x86_64), $(CFILES_aarch64))
-override ASFILES := $(if $(findstring x86_64, $(KARCH)), $(ASFILES_x86_64), $(ASFILES_aarch64))
+override CFILES := $(if $(findstring x86_64, $(KARCH)),  $(CFILES_UNIVERSAL) $(CFILES_x86_64), $(CFILES_aarch64))
+override ASFILES := $(if $(findstring x86_64, $(KARCH)), $(ASFILES_UNIVERSAL) $(ASFILES_x86_64), $(ASFILES_aarch64))
 override ARCH_OBJS := $(filter-out obj-%/%.o,$(OBJ))
 override ARCH_DEPS := $(filter-out obj-%/%.d,$(HEADER_DEPS))
 override OBJ := $(addprefix obj-$(KARCH)/,$(CFILES:.c=.c.o) $(ASFILES:.S=.S.o))

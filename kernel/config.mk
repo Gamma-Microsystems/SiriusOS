@@ -1,4 +1,6 @@
-# Config which will used by SiriusOS Configurator (menuconfig like utility)
+# ===================================================================
+# |                Cofiguration file for SiriusOS										|
+# ===================================================================
 KBITS = 64
 override KERNEL := ksir.$(KBITS)
 

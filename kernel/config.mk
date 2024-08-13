@@ -1,5 +1,5 @@
 # ===================================================================
-# |                Cofiguration file for SiriusOS										|
+#                 Cofiguration file for SiriusOS										
 # ===================================================================
 KBITS = 64
 override KERNEL := ksir.$(KBITS)

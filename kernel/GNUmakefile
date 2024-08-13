@@ -16,6 +16,7 @@ ASFILES_x86_64 := $(shell find arch/x86_64 -type f -name '*.S')
 
 CFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.c')
 ASFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.S')
+
 CFILES_UNIVERSAL := $(shell find audio fs misc net sys video -type f -name '*.c')
 ASFILES_UNIVERSAL := $(shell find audio fs misc net sys video -type f -name '*.S')
 
@@ -32,8 +33,9 @@ all: bin-$(KARCH)/$(KERNEL)
 
 # Link rules for the final kernel executable.
 bin-$(KARCH)/$(KERNEL): GNUmakefile arch/$(KARCH)/link.ld $(OBJ)
-	mkdir -p "$$(dirname $@)"
-	$(KLD) $(OBJ) $(KLDFLAGS) -o $@
+	@mkdir -p "$$(dirname $@)"
+	@echo -e 'CCLD' $@
+	@$(KLD) $(OBJ) $(KLDFLAGS) -o $@
 
 # Include header dependencies.
 -include $(HEADER_DEPS)

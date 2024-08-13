@@ -54,13 +54,16 @@ The following projects are currently in progress:
 - **Support more hardware** with new device drivers for AHCI, USB, virtio devices, etc.
 - **Continue to improve the C library** which remains quite incomplete compared to Newlib and is a major source of issues with bringing back old ports.
 - **More architectures**
-  - **PowerPC**
+  - **PowerPC (32 + 64)**
   - **s390**
   - **sparc**
   - **mips**
   - **riscv**
   - **arm32**
   - **LoongArch64**
+- **Use MinixFS3 instead of ext2**
+  - [x] **Read mode**
+  - [ ] **Write mode**
 
 ## Future Goals / Longbox
 - **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.

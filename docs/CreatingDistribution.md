@@ -11,6 +11,7 @@ You can use SiriusOS userland, but it will make your distribution an SiriusOS fo
 You can port GNU userland through elf toolchain, or your own.
 Also you can use busybox.
 And the most insane one for distributions which probably going to create own kernel in future, own userland, yes you can just implement all commands UI etc.
+UPD: one thing that you need to copy from SiriusOS userland is [terminal-font.h](https://raw.githubusercontent.com/Gamma-Microsystems/userland/main/terminal/terminal-font.h) (this note is for peoples who making own patches for the kernel separatly from SiriusOS sandbox).
 
 # Picking up the bootloader
 You can use [SiriusOS bootloader](../boot), grub, limine, easyboot, etc.

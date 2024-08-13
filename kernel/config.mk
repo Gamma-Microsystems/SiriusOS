@@ -18,7 +18,7 @@ endef
 override DEFAULT_KARCH := x86_64
 $(eval $(call DEFAULT_VAR,KARCH,$(DEFAULT_KARCH)))
 
-override DEFAULT_KCC := clang
+override DEFAULT_KCC := $(KARCH)-elf-gcc
 $(eval $(call DEFAULT_VAR,KCC,$(DEFAULT_KCC)))
 
 override KCC_IS_CLANG := no
@@ -27,7 +27,7 @@ ifeq ($(shell $(KCC) --version 2>&1 | grep -i 'clang' >/dev/null 2>&1 && echo 1)
 endif
 
 # Same thing for "ld" (the linker).
-override DEFAULT_KLD := ld.lld
+override DEFAULT_KLD := $(KARCH)-elf-ld
 $(eval $(call DEFAULT_VAR,KLD,$(DEFAULT_KLD)))
 
 # User controllable C flags.

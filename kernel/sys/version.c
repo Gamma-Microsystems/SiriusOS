@@ -54,7 +54,7 @@ const char * __kernel_build_time = __TIME__;
 #elif (defined(__clang__))
 # define COMPILER_VERSION "clang " __clang_version__
 #else
-# define COMPILER_VERSION "unknown-compiler how-did-you-do-that"
+# define COMPILER_VERSION "alien-C-collection 14390KSF"
 #endif
 
 const char * __kernel_compiler_version = COMPILER_VERSION;

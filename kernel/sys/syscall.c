@@ -3,9 +3,10 @@
  * @brief System call handlers.
  *
  * @copyright
- * This file is part of ToaruOS and is released under the terms
+ * This file is part of SiriusOS and is released under the terms
  * of the NCSA / University of Illinois License - see LICENSE.md
  * Copyright (C) 2011-2021 K. Lange
+ * Copyright (C) 2024 Gamma Microsystems
  */
 #include <stdint.h>
 #include <errno.h>
@@ -75,14 +76,14 @@ extern int elf_module(char ** args);
 long sys_sysfunc(long fn, char ** args) {
 	/* FIXME: Most of these should be top-level, many are hacks/broken in Misaka */
 	switch (fn) {
-		case TOARU_SYS_FUNC_SYNC:
+		case SIRIUS_SYS_FUNC_SYNC:
 			/* FIXME: There is no sync ability in the VFS at the moment.
 			 * XXX: Should this just be an ioctl on individual devices?
 			 *      Or possibly even an ioctl we can send to arbitrary files? */
 			printf("sync: not implemented\n");
 			return -EINVAL;
 
-		case TOARU_SYS_FUNC_LOGHERE:
+		case SIRIUS_SYS_FUNC_LOGHERE:
 			/* FIXME: The entire kernel logging system needs to be revamped as
 			 *        Misaka switched everything to raw printfs, and then also
 			 *        removed most of them for cleanliness... first task would
@@ -91,7 +92,7 @@ long sys_sysfunc(long fn, char ** args) {
 			printf("\033[32m%s\033[0m", (char*)args);
 			return -EINVAL;
 
-		case TOARU_SYS_FUNC_KDEBUG:
+		case SIRIUS_SYS_FUNC_KDEBUG:
 			/* FIXME: The kernel debugger is completely deprecated and fully removed
 			 *        in Misaka, and I'm not sure I want to add it back... */
 			if (this_core->current_process->user != 0) return -EACCES;
@@ -120,7 +121,7 @@ long sys_sysfunc(long fn, char ** args) {
 			return 0;
 		}
 
-		case TOARU_SYS_FUNC_INSMOD:
+		case SIRIUS_SYS_FUNC_INSMOD:
 			/* Linux has init_module as a system call? */
 			if (this_core->current_process->user != 0) return -EACCES;
 			PTR_VALIDATE(args);
@@ -130,7 +131,7 @@ long sys_sysfunc(long fn, char ** args) {
 			for (char ** aa = args; *aa; ++aa) { PTR_VALIDATE(*aa); }
 			return elf_module(args);
 
-		case TOARU_SYS_FUNC_SETHEAP: {
+		case SIRIUS_SYS_FUNC_SETHEAP: {
 			/* I'm not really sure how this should be done...
 			 * traditional brk() would be expected to map everything in-between,
 			 * but we use this to move the heap in ld.so, and we don't want
@@ -148,7 +149,7 @@ long sys_sysfunc(long fn, char ** args) {
 			return 0;
 		}
 
-		case TOARU_SYS_FUNC_MMAP: {
+		case SIRIUS_SYS_FUNC_MMAP: {
 			/* FIXME: This whole thing should be removed; we need a proper mmap interface,
 			 *        preferrably with all of the file mapping options, too. And it should
 			 *        probably also interact with the SHM subsystem... */
@@ -171,7 +172,7 @@ long sys_sysfunc(long fn, char ** args) {
 			return 0;
 		}
 
-		case TOARU_SYS_FUNC_THREADNAME: {
+		case SIRIUS_SYS_FUNC_THREADNAME: {
 			/* This should probably be moved to a new system call. */
 			int count = 0;
 			char **arg = args;
@@ -192,7 +193,7 @@ long sys_sysfunc(long fn, char ** args) {
 			return 0;
 		}
 
-		case TOARU_SYS_FUNC_SETGSBASE:
+		case SIRIUS_SYS_FUNC_SETGSBASE:
 			/* This should be a new system call; see what Linux, et al., call it. */
 			PTR_VALIDATE(args);
 			if (!args) return -EFAULT;
@@ -201,7 +202,7 @@ long sys_sysfunc(long fn, char ** args) {
 			arch_set_tls_base(this_core->current_process->thread.context.tls_base);
 			return 0;
 
-		case TOARU_SYS_FUNC_NPROC:
+		case SIRIUS_SYS_FUNC_NPROC:
 			return processor_count;
 
 		default:

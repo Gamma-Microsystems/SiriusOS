@@ -17,7 +17,7 @@ ASFILES_x86_64 := $(shell find arch/x86_64 -type f -name '*.S')
 CFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.c')
 ASFILES_aarch64 := $(shell find arch/aarch64 -type f -name '*.S')
 
-CFILES_UNIVERSAL := $(shell find audio fs misc net sys video -type f -name '*.c')
+CFILES_UNIVERSAL := $(shell find audio fs misc net sys video generic.c binfmt.c -type f -name '*.c')
 ASFILES_UNIVERSAL := $(shell find audio fs misc net sys video -type f -name '*.S')
 
 override CFILES := $(if $(findstring x86_64, $(KARCH)),  $(CFILES_UNIVERSAL) $(CFILES_x86_64), $(CFILES_aarch64))

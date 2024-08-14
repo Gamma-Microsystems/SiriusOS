@@ -36,3 +36,9 @@
 /kernel8.img.elf
 kernel/bin*/
 kernel/obj*/
+base/
+!base/etc
+!base/home
+!base/lib/.dummy
+!base/usr/share/
+!base/usr/include/

@@ -150,11 +150,11 @@ static inline uintptr_t __attribute__ ((always_inline, pure)) klmalloc_adjust_bi
  * Given a size value, find the correct bin
  * to place the requested allocation in.
  */
- static inline uintptr_t __attribute__ ((always_inline, pure)) klmalloc_bin_size(uintptr_t size) {
-		uintptr_t bin = (size + 1) & ~((1 << (__builtin_clzll(size) >> __builtin_ctzl(size))) - 1);
-		bin += !!(size & (size - 1));
-	 return klmalloc_adjust_bin(bin);
- }
+static inline uintptr_t __attribute__ ((always_inline, pure)) klmalloc_bin_size(uintptr_t size) {
+ 	uintptr_t bin = sizeof(size) * CHAR_BIT - __builtin_clzl(size);
+ 	bin += !!(size & (size - 1));
+ 	return klmalloc_adjust_bin(bin);
+}
 
 /*
  * Bin header - One page of memory.

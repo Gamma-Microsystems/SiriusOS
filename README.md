@@ -55,7 +55,7 @@ The following projects are currently in progress:
 - **Continue to improve the C library** which remains quite incomplete compared to Newlib and is a major source of issues with bringing back old ports.
 - **More architectures**
   - **PowerPC (32 + 64)**
-  - **sparc**
+  - **sparc (32 bit only)**
   - **mips**
   - **riscv**
   - **arm32**

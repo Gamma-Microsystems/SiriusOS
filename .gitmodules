@@ -1,6 +1,3 @@
-[submodule "libc"]
-	path = libc
-	url = https://github.com/Gamma-Microsystems/libc.git
 [submodule "base/usr/include"]
 	path = base/usr/include
 	url = https://github.com/Gamma-Microsystems/include.git

@@ -1,8 +1,8 @@
 .PHONY: all
 all:
 	@make -C kernel
-	@make -C modules all
-	@make -C libc all
+	@make -C modules
+	@make -C libc
 	@make -C lib
 	@make -C ld
 	@make -C userland

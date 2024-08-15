@@ -21,12 +21,9 @@
 /util/build
 /util/local
 /util/cross
-/base/bin/*
-/base/usr/bin/*
-/base/usr/lib/*
-/base/usr/share/games/doom
+/base/usr/share/games/
+!/base/usr/share/games/pong
 /.make/
-/cdrom
 /fatbase
 /image.iso
 /boot/mbr.sys

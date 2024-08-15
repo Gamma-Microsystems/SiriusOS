@@ -1,0 +1,8 @@
+AS = $(KARCH)-elf-as
+BASE = base
+
+CRTS = $(BASE)base/lib/crt0.o $(BASE)/lib/crti.o $(BASE)/lib/crtn.o
+
+$(BASE)/lib/crt%.o: libc/arch/$(KARCH)/crt%.S
+	@echo -e 'AS' $@
+	@$(AS) -o $@ $<

@@ -70,8 +70,8 @@ static int __trace_ld = 0;
  * to build separate objects for them and complicate linking,
  * since ld is specially built as a static object.
  */
-#include "../lib/list.c"
-#include "../lib/hashmap.c"
+#include "../lib/etc/list.c"
+#include "../lib/etc/hashmap.c"
 
 typedef int (*entry_point_t)(int, char *[], char**);
 

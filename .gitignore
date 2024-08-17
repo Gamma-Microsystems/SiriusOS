@@ -38,6 +38,8 @@ base/
 !base/home
 !base/lib/.dummy
 !base/usr/share/
-!base/usr/include/
+!base/usr/include/kernel
+!base/usr/include/sirius
 !base/*/.gitkeep
 !base/*/*/.gitkeep
+!meta # unfinished stuff

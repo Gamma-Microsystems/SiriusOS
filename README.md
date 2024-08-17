@@ -63,6 +63,7 @@ The following projects are currently in progress:
 - **Use MinixFS3 instead of ext2**
   - [x] **Read mode**
   - [ ] **Write mode**
+- **Use musl libc instead of t(s)libc**
 
 ## Future Goals / Longbox
 - **Improve SMP performance** with better scheduling and smarter userspace synchronization functions.

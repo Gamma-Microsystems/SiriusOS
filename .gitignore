@@ -42,4 +42,3 @@ base/
 !base/usr/include/sirius
 !base/*/.gitkeep
 !base/*/*/.gitkeep
-!meta # unfinished stuff

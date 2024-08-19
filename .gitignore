@@ -37,6 +37,6 @@ base/usr/include/*
 !base/usr/include/sirius
 !base/usr/include/kernel
 meta/*.tar.gz
-meta/sirius-build
+meta/sirius-out
 meta/base
 meta/musl-*

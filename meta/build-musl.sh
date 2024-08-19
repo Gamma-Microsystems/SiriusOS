@@ -15,7 +15,7 @@ MUSL_RELEASE="musl-1.2.5"
 cd "${SCRIPTPATH}"
 
 # --noreplace -> won't re-compile if it finds libc
-if test -f "$SCRIPTPATH/cavos-out/lib/libc.a"; then
+if test -f "$SCRIPTPATH/sirius-out/lib/libc.a"; then
 	if [ "$#" -eq 1 ]; then
 		exit 0
 	fi
@@ -32,13 +32,8 @@ if ! test -f "$SCRIPTPATH/$MUSL_RELEASE/README"; then
 	# cd ../
 fi
 
-# Ensure the ELF/SiriusOS toolchain's in PATH
-if [[ ":$PATH:" != *":$HOME/srs/cross/bin:"* ]]; then
-	export PATH=$HOME/srs/cross/bin:$PATH
-fi
-
 # Booo! Scary!
-export PREFIX="../base"
+export PREFIX="../../base"
 mkdir -p sirius-build
 cd sirius-build
 CC=$KARCH-$TRIPLET-gcc ARCH=$KARCH CROSS_COMPILE=$KARCH-$TRIPLET- "../$MUSL_RELEASE/configure" --target=$KARCH-$TRIPLET --build=$KARCH-$TRIPLET --host=$KARCH-$TRIPLET --prefix="$PREFIX" --syslibdir="/lib" --enable-debug

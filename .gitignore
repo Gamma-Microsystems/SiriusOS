@@ -33,15 +33,9 @@
 /kernel8.img.elf
 kernel/bin*/
 kernel/obj*/
-base/
-!base/etc
-!base/home
-!base/lib/.dummy
-!base/usr/share/
-!base/usr/include/kernel
+base/usr/include/*
 !base/usr/include/sirius
-!base/*/.gitkeep
-!base/*/*/.gitkeep
+!base/usr/include/kernel
 meta/*.tar.gz
 meta/sirius-build
 meta/base

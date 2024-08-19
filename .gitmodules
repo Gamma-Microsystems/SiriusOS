@@ -7,3 +7,9 @@
 [submodule "userland"]
 	path = userland
 	url = https://github.com/Gamma-Microsystems/userland.git
+[submodule "base/usr/include/sirius"]
+	path = base/usr/include/sirius
+	url = https://github.com/Gamma-Microsystems/sirius.git
+[submodule "base/usr/include/kernel"]
+	path = base/usr/include/kernel
+	url = https://github.com/Gamma-Microsystems/kernel.git

@@ -42,3 +42,7 @@ base/
 !base/usr/include/sirius
 !base/*/.gitkeep
 !base/*/*/.gitkeep
+meta/*.tar.gz
+meta/sirius-build
+meta/base
+meta/musl-*

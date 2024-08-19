@@ -13,3 +13,6 @@
 [submodule "base/usr/include/kernel"]
 	path = base/usr/include/kernel
 	url = https://github.com/Gamma-Microsystems/kernel.git
+[submodule "pdclib"]
+	path = pdclib
+	url = https://github.com/Gamma-Microsystems/pdclib
